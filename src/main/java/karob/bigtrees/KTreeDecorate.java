@@ -4,9 +4,8 @@
 
 package karob.bigtrees;
 
-import java.io.File;
-
 import java.util.Random;
+
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;

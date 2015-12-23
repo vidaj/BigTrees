@@ -4,8 +4,12 @@
 
 package karob.bigtrees;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
 //import net.minecraft.src.EnumOSHelper;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 // Referenced classes of package net.minecraft.src:
 //            WorldGenerator, World, Block, BlockLeaves, 

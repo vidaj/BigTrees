@@ -4,7 +4,6 @@
 
 package karob.bigtrees;
 
-import java.lang.Math;
 
 // Referenced classes of package net.minecraft.src:
 //            WorldGenerator, World, Block, BlockLeaves, 

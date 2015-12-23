@@ -1,17 +1,11 @@
 package karob.bigtrees;
 
 import java.io.File;
-import java.util.logging.Level;
-
-import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraft.world.*;
-
-import karob.bigtrees.KTreeCfg;
+import net.minecraftforge.common.config.Configuration;
 
 public class KTreeCfgBiomes 
 {

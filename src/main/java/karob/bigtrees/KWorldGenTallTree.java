@@ -5,12 +5,11 @@
 package karob.bigtrees;
 
 import java.util.Random;
-import java.lang.Math;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraft.world.World;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.WorldGenerator;
 //import net.minecraft.src.KTreeCfg;
 
 // Referenced classes of package net.minecraft.src:

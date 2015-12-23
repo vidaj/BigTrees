@@ -1,19 +1,11 @@
 package karob.bigtrees;
 
 import java.io.File;
-import java.util.logging.Level;
-
-import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.block.Block;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraft.world.*;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
-import karob.bigtrees.KTreeCfg;
+import net.minecraftforge.common.config.Configuration;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class KTreeCfgTrees 
 {
