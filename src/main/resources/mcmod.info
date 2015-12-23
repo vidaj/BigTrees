@@ -1,0 +1,18 @@
+[{
+    "modid": "bigtrees",
+    "name": "The BigTrees Mod",
+    "description": "Adds larger trees to Minecraft, enhancing dimensional complexity and atmophsere.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "www.minecraftforum.net/topic/782646-",
+    "updateUrl": "",
+    "authors": ["Karob", "ThorinStonehelm"],
+    "credits": "Karob, ThorinStonehelm",
+    "logoFile": "assets/bigtrees/textures/gui/btlogo.png",
+    "screenshots": [],
+    "parent": "",
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "useDependencyInformation": "false"
+}]
