@@ -25,7 +25,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 //import net.minecraftforge.event.Event.Result;
 
 @Mod(modid="bigtrees", name="BigTrees", version="1.7.2b")
-public class mod_BigTrees{
+public class BigTrees{
 
     protected KWorldGenBigTree kWorldGenBigTree;
     protected KWorldGenCyprusTree kWorldGenCyprusTree;
@@ -37,7 +37,7 @@ public class mod_BigTrees{
     public String configDir;
 
     @Instance("bigtrees")
-    public static mod_BigTrees instance;
+    public static BigTrees instance;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event){
