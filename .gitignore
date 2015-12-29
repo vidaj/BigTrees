@@ -5,3 +5,8 @@ build
 *~
 .settings
 bin
+config/
+logs/
+options.txt
+saves/
+usernamecache.json
