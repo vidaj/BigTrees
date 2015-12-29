@@ -2,15 +2,17 @@
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) braces deadcode fieldsfirst 
 
-package karob.bigtrees;
+package karob.bigtrees.generators;
 
 import java.util.Random;
 
+import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.config.ITreeConfigurable;
+import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 //import net.minecraft.src.KTreeCfg;
 
@@ -18,7 +20,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 //            WorldGenerator, World, Block, BlockLeaves, 
 //            BlockGrass
 
-public class KWorldGenBigTree extends WorldGenerator
+public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeConfigurable
 {
 
 
@@ -29,7 +31,6 @@ public class KWorldGenBigTree extends WorldGenerator
     int rootRand;
     int rootAlt;
     int tapRootRand;
-    World worldObj;
     int basePos[] = {
         0, 0, 0
     };
@@ -37,14 +38,14 @@ public class KWorldGenBigTree extends WorldGenerator
     int height;
     double heightAttenuation;
     double field_875_h;
-    double field_874_i;
-    double field_873_j;
-    double field_872_k;
+    double branchSlope;
+    double scaleWidth;
+    double leafDensity;
     int trunkSize;
     int heightLimitLimit;
     int leafDistanceLimit;
     int[][] leafNodes;
-    int type;
+    int type = 0;
     Block trunkBlock;
     private int trunkMeta;
     Block leafBlock;
@@ -54,9 +55,9 @@ public class KWorldGenBigTree extends WorldGenerator
     private int heightmax;
 
 
-    public KWorldGenBigTree(boolean flag)
+    public KWorldGenBigTree(boolean doBlockNotify)
     {
-        super(flag);
+        super(doBlockNotify);
         rand = new Random();
         rootRand = 0;
         rootAlt = 0;
@@ -64,9 +65,9 @@ public class KWorldGenBigTree extends WorldGenerator
         heightLimit = 0; // Tree height
         heightAttenuation = 0.31799999999999999D; // Trunk percentage height
         field_875_h = 1.0D;
-        field_874_i = 0.68100000000000001D; // Branch height to base hight stuff
-        field_873_j = 1.0D; // Branch length
-        field_872_k = 1.0D;
+        branchSlope = 0.618D; // Branch height to base hight stuff
+        scaleWidth = 1.0D; // Branch length
+        leafDensity = 1.0D;
         trunkSize = 1; // Trunk height
         heightLimitLimit = 12; // Height variation
         leafDistanceLimit = 4; // Leaf thickness
@@ -74,30 +75,7 @@ public class KWorldGenBigTree extends WorldGenerator
 //        KTreeCfg.init();
     }
 
-    void setConfigOptions(Block wood, Block leaf, int woodmeta, int leafmeta, Block Base1, Block Base2, int height1, int height2, int stunt){
-	trunkBlock = wood;
-	leafBlock = leaf;
-	trunkMeta = woodmeta;
-	leafMeta = leafmeta;
-	heightmin = height1;
-	heightmax = height2;
-	stuntmin = stunt;
-    }
-
-
-    void setBlockAndMetadata(int par1, int par2, int par3, Block par4, int par5){
-        try{
-            worldObj.setBlock(par1, par2, par3, par4, par5, 3);
-        }catch(RuntimeException e){}
-    }
-
-    Block getBlock(int par1, int par2, int par3){
-        try{
-            return worldObj.getBlock(par1, par2, par3);
-        }catch(RuntimeException e){
-            return null;
-        }
-    }
+    
 
     private boolean generateLeafNodeList()
     {
@@ -114,7 +92,7 @@ public class KWorldGenBigTree extends WorldGenerator
           if(basePos[1] + heightLimit > 256 - 4)
             return false;
         }
-        int i = (int)(1.3819999999999999D + Math.pow((field_872_k * (double)heightLimit) / 13D, 2D));
+        int i = (int)(1.382D + Math.pow((leafDensity * (double)heightLimit) / 13D, 2D));
         if(i < 1)
         {
             i = 1;
@@ -133,7 +111,7 @@ public class KWorldGenBigTree extends WorldGenerator
         while(i1 >= 0) 
         {
             int j1 = 0;
-            float f = func_528_a(i1); //Conditional AND branch length factor.
+            float f = layerSize(i1); //Conditional AND branch length factor.
               if(k >= i * heightLimit) f = -1.0F;
             if(f < 0.0F) //not time to grow branches
             {
@@ -141,17 +119,16 @@ public class KWorldGenBigTree extends WorldGenerator
                 i1--;
             } else // grow branches! All branches grow from one spot, radiating from vertical to horizontal.
             {
-                double d = 0.5D;
-                for(; j1 < i; j1++)
+                for(double d0 = 0.5D; j1 < i; j1++)
                 {
                     // branch length
-                    double d1 = field_873_j * ((double)f * ((double)rand.nextFloat() + 0.32800000000000001D));
+                    double d1 = scaleWidth * ((double)f * ((double)rand.nextFloat() + 0.328D));
                     //if(d1 > 8D) d1 = 8D;
                     //if(d1 < -5D) d1 = -5D;
                     // branch angle (around trunk)
-                    double d2 = (double)rand.nextFloat() * 2D * 3.1415899999999999D;
-                    int k1 = MathHelper.floor_double(d1 * Math.sin(d2) + (double)basePos[0] + d);
-                    int l1 = MathHelper.floor_double(d1 * Math.cos(d2) + (double)basePos[2] + d);
+                    double d2 = (double)rand.nextFloat() * 2D * Math.PI;
+                    int k1 = MathHelper.floor_double(d1 * Math.sin(d2) + (double)basePos[0] + d0);
+                    int l1 = MathHelper.floor_double(d1 * Math.cos(d2) + (double)basePos[2] + d0);
                     int ai1[] = {
                         k1, j, l1
                     };
@@ -165,15 +142,15 @@ public class KWorldGenBigTree extends WorldGenerator
                     int ai3[] = {
                         basePos[0], basePos[1], basePos[2]
                     };
-                    //double d3 = Math.sqrt(Math.pow(Math.abs(basePos[0] - ai1[0]), 2D) + Math.pow(Math.abs(basePos[2] - ai1[2]), 2D));
-                    //double d4 = d3 * field_874_i;
-                    //if((double)ai1[1] - d4 > (double)l)
-                    //{
+                    double d3 = Math.sqrt(Math.pow(Math.abs(basePos[0] - ai1[0]), 2D) + Math.pow(Math.abs(basePos[2] - ai1[2]), 2D));
+                    double d4 = d3 * branchSlope;
+                    if((double)ai1[1] - d4 > (double)l)
+                    {
                         ai3[1] = l;
-                    //} else
-                    //{
-                    //    ai3[1] = (int)((double)ai1[1] - d4);
-                    //}
+                    } else
+                    {
+                        ai3[1] = (int)((double)ai1[1] - d4);
+                    }
                     if(checkBlockLine(ai3, ai1) == -1)
                     {
                         ai[k][0] = k1;
@@ -198,7 +175,7 @@ public class KWorldGenBigTree extends WorldGenerator
 // GENERATE LEAF BLOCKS
     void func_523_a(int i, int j, int k, float f, byte byte0)
     {
-        int i1 = (int)((double)f + 0.61799999999999999D);
+        int i1 = (int)((double)f + 0.618D);
         byte byte1 = otherCoordPairs[byte0];
         byte byte2 = otherCoordPairs[byte0 + 3];
         int ai[] = {
@@ -240,7 +217,7 @@ public class KWorldGenBigTree extends WorldGenerator
     }
 
 // CHECK IF TIME TO GROW BRANCHES - and partially decide branch length
-    float func_528_a(int i)
+    float layerSize(int i)
     {
         if(trunkSize == 0){
             //100% branch density
@@ -290,7 +267,7 @@ public class KWorldGenBigTree extends WorldGenerator
     }
 
 //  LEAF GEN CHECK RADIUS
-    float func_526_b(int i)
+    float leafSize(int i)
     {
         if(i < 0 || i >= leafDistanceLimit)
         {
@@ -305,7 +282,7 @@ public class KWorldGenBigTree extends WorldGenerator
         int l = j;
         for(int i1 = j + leafDistanceLimit; l < i1; l++)
         {
-            float f = func_526_b(l - j);
+            float f = leafSize(l - j);
             func_523_a(i, l, k, f, (byte)1);
             //func_523_a(i, l, k, f, (byte)1, 18);
         }
@@ -378,7 +355,7 @@ public class KWorldGenBigTree extends WorldGenerator
     boolean leafNodeNeedsBase(int i)
     {
         if(trunkSize != 2) return true;
-        return (double)i >= (double)heightLimit * 0.20000000000000001D;
+        return (double)i >= (double)heightLimit * 0.2D;
     }
 
 // GENERATES TRUNK
@@ -1043,7 +1020,6 @@ rootAlt = 10;
 
     public boolean generate(World world, Random random, int i, int j, int k)
     {
-		type = 0;
 		return generator(world, random, i, j, k);
 	}
 
@@ -1091,12 +1067,18 @@ rootAlt = 10;
 
     private boolean generator(World world, Random random, int i, int j, int k)
     {
-        worldObj = world;
+        worldObject = world;
         long l = random.nextLong();
         rand.setSeed(l);
         basePos[0] = i;
         basePos[1] = j;
         basePos[2] = k;
+        
+        if (!validTreeLocation()) {
+        	worldObject = null;
+        	return false;
+        }
+        
         int qq;
         boolean qbirch = false;
 /*        if(heightLimit == 0)
@@ -1116,13 +1098,14 @@ rootAlt = 10;
             qq = 87;
         }
 //qq=89;
+        
 	int[] heightvector = {heightmin, heightmax-heightmin};
 	heightLimit = KTreeCfg.vary(rand,heightvector);
         if(qq < 8){
             //WIDE TREE
             //heightLimit = KTreeCfg.vary(rand,oak2Height); //Tree Height
             heightAttenuation = 0.1D; //Trunk Percentage Height
-            field_873_j = 1.4D; //Branch Length
+            scaleWidth = 1.4D; //Branch Length
             trunkSize = 4; //Trunk Width
             heightLimitLimit = 4; //Height Variation
             leafDistanceLimit = 4; //Leaf Thickness
@@ -1134,7 +1117,7 @@ rootAlt = 10;
             //TALL TREE
             //heightLimit = KTreeCfg.vary(rand,KTreeCfg.pine1Height); //Tree Height
             heightAttenuation = 0.3D; //Trunk Percentage Height
-            field_873_j = 1.2D; //Branch Length
+            scaleWidth = 1.2D; //Branch Length
             trunkSize = 3; //Trunk Width
             heightLimitLimit = 3; //Height Variation
             leafDistanceLimit = 4; //Leaf Thickness
@@ -1146,7 +1129,7 @@ rootAlt = 10;
             //BIGGER TREE
             //heightLimit = KTreeCfg.vary(rand,KTreeCfg.oak1Height); //Tree Height
             heightAttenuation = 0.3D; //Trunk Percentage Height
-            field_873_j = 1.0D; //Branch Length
+            scaleWidth = 1.0D; //Branch Length
             trunkSize = 2; //Trunk Width
             heightLimitLimit = 3; //Height Variation
             leafDistanceLimit = 4; //Leaf Thickness
@@ -1165,7 +1148,7 @@ rootAlt = 10;
             //DEAD TREE
             //heightLimit = KTreeCfg.vary(rand,KTreeCfg.stubHeight); //Tree Height
             heightAttenuation = 0.3D; //Trunk Percentage Height
-            field_873_j = 1.0D; //Branch Length
+            scaleWidth = 1.0D; //Branch Length
             trunkSize = 2; //Trunk Width
             heightLimitLimit = 3; //Height Variation
             leafDistanceLimit = 0; //Leaf Thickness
@@ -1175,7 +1158,7 @@ rootAlt = 10;
             //VINEY FUNGUS
             heightLimit = 5; //Tree Height
             heightAttenuation = 0.1D; //Trunk Percentage Height
-            field_873_j = 2.0D; //Branch Length
+            scaleWidth = 2.0D; //Branch Length
             trunkSize = 0; //Trunk Width
             heightLimitLimit = 0; //Height Variation
             leafDistanceLimit = 0; //Leaf Thickness
@@ -1184,7 +1167,7 @@ rootAlt = 10;
         }
         if(type == 1){
             if(trunkSize != 1){
-              field_873_j = field_873_j * 1.0D; //Double branch length on desert trees.
+              scaleWidth = scaleWidth * 1.0D; //Double branch length on desert trees.
               //heightLimit = KTreeCfg.vary(rand,KTreeCfg.deadHeight); //Tree Height
             }
             leafDistanceLimit = 0; //No leaves on desert trees.
@@ -1229,4 +1212,17 @@ rootAlt = 10;
         }
 */
     }
+
+	@Override
+	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
+		trunkBlock = treeConfiguration.getWood();
+    	leafBlock = treeConfiguration.getLeaf();
+//    	baseBlock1 = treeConfiguration.getBaseBlock1();
+//    	baseBlock2 = treeConfiguration.getBaseBlock2();
+		trunkMeta = treeConfiguration.getWoodMeta();
+		leafMeta = treeConfiguration.getLeafMeta();
+		heightmin = treeConfiguration.getMinHeight();
+		heightmax = treeConfiguration.getMaxHeight();
+		stuntmin = treeConfiguration.getMinStunt();
+	}
 }

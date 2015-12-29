@@ -3,6 +3,10 @@ package karob.bigtrees;
 import java.util.List;
 import java.util.Random;
 
+import karob.bigtrees.generators.KWorldGenBigTree;
+import karob.bigtrees.generators.KWorldGenCyprusTree;
+import karob.bigtrees.generators.KWorldGenHatTree;
+import karob.bigtrees.generators.KWorldGenTallTree;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 //import net.minecraft.client.renderer.texture.IconRegister;
@@ -139,90 +143,90 @@ private static final String[] treeNames = new String[] {"BigOak", "BigBirch", "B
 	//TODO:		growTree()
 	public void func_149878_d(World par1World, int i, int j, int k, Random r)
 	{
-		resetNeighborBuffer();
-		int meta = par1World.getBlockMetadata(i, j, k) & 15;
-		Object obj = null;
-	    if(meta == 0){
-	            if(checkTreeCoin4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-	                    clearTreeCoin4x4(par1World, i, j, k);
-			    KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			    tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
-	                    if(!tree.greatGenerate(par1World, r, x_offset, j, z_offset)){
-            	            	resetTreeCoin4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-                	    }
-            	    }else if(checkTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-                    	clearTreeRing4x4(par1World, i, j, k);
-			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
-                	if(!tree.swampGenerate(par1World, r, x_offset, j, z_offset)){
-                    		resetTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-                	}
-            	    }else if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-                    	clearTreeBlock2x2(par1World, i, j, k);
-			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 12, 18, 8);
-                	if(!tree.blockOakGenerate(par1World, r, x_offset, j, z_offset)){
-                    		resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-                	}
-            	    }else{
-                    	par1World.setBlockToAir(i, j, k);
-			KWorldGenTallTree tree = (new KWorldGenTallTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13,0.23, 0.32, 0.60, 0.618034, 0.50, 0.60, 0.0, 0.08, 3, 0.12, 0.60, 4, 30, 0.75);
-                	if(!tree.generate(par1World, r, i, j, k)){
-                    		par1World.setBlock(i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"));
-                	}
-            	    }
-// BIRCH SAPLINGS
-        }else if(meta == 1){
-        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-        	        clearTreeBlock2x2(par1World, i, j, k);
-			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 2, 2, Blocks.dirt, Blocks.grass, 19, 24, 13);
-               		if(!tree.birchGenerate(par1World, r, x_offset, j, z_offset)){
-               		    resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-               		}
-        	}
-// PINE SAPLINGS
-        }else if(meta == 2){
-        	if(checkTreeCross3x3(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-               		clearTreeCross3x3(par1World, i, j, k);
-			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 1, 1, Blocks.dirt, Blocks.grass, 18, 22, 13);
-              		if(!tree.pineGenerate(par1World, r, x_offset, j, z_offset)){
-               			resetTreeCross3x3(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-              		}
-        	}
-// DEAD SAPLINGS
-        }else if(meta == 3){
-        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-               		clearTreeBlock2x2(par1World, i, j, k);
-			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 13, 17, 10);
-              		if(!tree.desertGenerate(par1World, r, x_offset, j, z_offset)){
-               			resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-               		}
-        	}
-// CYPRUS SAPLINGS
-        }else if(meta == 4){
-        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-               		clearTreeBlock2x2(par1World, i, j, k);
-			KWorldGenCyprusTree tree = (new KWorldGenCyprusTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 1, 1, Blocks.dirt, Blocks.grass, 28, 32, 13);
-               		if(!tree.generate(par1World, r, x_offset, j, z_offset)){
-               			resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-              		}
-        	}
-// HAT TREE SAPLINGS
-        }else if(meta == 5){
-        	if(checkTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
-               		clearTreeRing4x4(par1World, i, j, k);
-			KWorldGenHatTree tree = (new KWorldGenHatTree(true));
-			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
-              		if(!tree.generate(par1World, r, x_offset, j, z_offset)){
-               			resetTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
-               		}
-        	}
-        }
+//		resetNeighborBuffer();
+//		int meta = par1World.getBlockMetadata(i, j, k) & 15;
+//		Object obj = null;
+//	    if(meta == 0){
+//	            if(checkTreeCoin4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//	                    clearTreeCoin4x4(par1World, i, j, k);
+//			    KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			    tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
+//	                    if(!tree.greatGenerate(par1World, r, x_offset, j, z_offset)){
+//            	            	resetTreeCoin4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//                	    }
+//            	    }else if(checkTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//                    	clearTreeRing4x4(par1World, i, j, k);
+//			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
+//                	if(!tree.swampGenerate(par1World, r, x_offset, j, z_offset)){
+//                    		resetTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//                	}
+//            	    }else if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//                    	clearTreeBlock2x2(par1World, i, j, k);
+//			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 12, 18, 8);
+//                	if(!tree.blockOakGenerate(par1World, r, x_offset, j, z_offset)){
+//                    		resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//                	}
+//            	    }else{
+//                    	par1World.setBlockToAir(i, j, k);
+//			KWorldGenTallTree tree = (new KWorldGenTallTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13,0.23, 0.32, 0.60, 0.618034, 0.50, 0.60, 0.0, 0.08, 3, 0.12, 0.60, 4, 30, 0.75);
+//                	if(!tree.generate(par1World, r, i, j, k)){
+//                    		par1World.setBlock(i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"));
+//                	}
+//            	    }
+//// BIRCH SAPLINGS
+//        }else if(meta == 1){
+//        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//        	        clearTreeBlock2x2(par1World, i, j, k);
+//			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 2, 2, Blocks.dirt, Blocks.grass, 19, 24, 13);
+//               		if(!tree.birchGenerate(par1World, r, x_offset, j, z_offset)){
+//               		    resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//               		}
+//        	}
+//// PINE SAPLINGS
+//        }else if(meta == 2){
+//        	if(checkTreeCross3x3(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//               		clearTreeCross3x3(par1World, i, j, k);
+//			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 1, 1, Blocks.dirt, Blocks.grass, 18, 22, 13);
+//              		if(!tree.pineGenerate(par1World, r, x_offset, j, z_offset)){
+//               			resetTreeCross3x3(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//              		}
+//        	}
+//// DEAD SAPLINGS
+//        }else if(meta == 3){
+//        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//               		clearTreeBlock2x2(par1World, i, j, k);
+//			KWorldGenBigTree tree = (new KWorldGenBigTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 13, 17, 10);
+//              		if(!tree.desertGenerate(par1World, r, x_offset, j, z_offset)){
+//               			resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//               		}
+//        	}
+//// CYPRUS SAPLINGS
+//        }else if(meta == 4){
+//        	if(checkTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//               		clearTreeBlock2x2(par1World, i, j, k);
+//			KWorldGenCyprusTree tree = (new KWorldGenCyprusTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 1, 1, Blocks.dirt, Blocks.grass, 28, 32, 13);
+//               		if(!tree.generate(par1World, r, x_offset, j, z_offset)){
+//               			resetTreeBlock2x2(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//              		}
+//        	}
+//// HAT TREE SAPLINGS
+//        }else if(meta == 5){
+//        	if(checkTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta)){
+//               		clearTreeRing4x4(par1World, i, j, k);
+//			KWorldGenHatTree tree = (new KWorldGenHatTree(true));
+//			tree.setConfigOptions(Blocks.log, Blocks.leaves, 0, 0, Blocks.dirt, Blocks.grass, 28, 32, 13);
+//              		if(!tree.generate(par1World, r, x_offset, j, z_offset)){
+//               			resetTreeRing4x4(par1World, i, j, k, GameRegistry.findBlock("bigtrees", "bt_bigSapling"), meta);
+//               		}
+//        	}
+//        }
     }
 		
 
