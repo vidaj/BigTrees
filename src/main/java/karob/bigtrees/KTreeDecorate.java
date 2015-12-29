@@ -48,6 +48,14 @@ public class KTreeDecorate {
 				int z = posZ + rand.nextInt(16) + 8;
 				int y = world.getHeightValue(x, z);
 				
+				/* In case we wander outside out original biome, don't generate there.
+				 * This should stop trees in desert edges and such.
+				 */
+				BiomeGenBase currentBiome = world.getBiomeGenForCoords(x, z);
+				if (currentBiome.biomeID != biome.biomeID) {
+					continue;
+				}
+				
 				if (rand.nextInt(50 * numberoftrees) != 0) {
 					continue;
 				}
