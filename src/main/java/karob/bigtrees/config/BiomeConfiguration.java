@@ -7,11 +7,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import karob.bigtrees.KTreeCfgTrees;
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Property;
+import cpw.mods.fml.common.FMLLog;
 
 public class BiomeConfiguration {
 
@@ -20,6 +20,8 @@ public class BiomeConfiguration {
 	private Set<BiomeDictionary.Type> excludedBiomeTypes = new HashSet<BiomeDictionary.Type>();
 	
 	private Map<TreeConfiguration, Integer> treePopulation = new HashMap<TreeConfiguration, Integer>();
+	
+	private Set<String> specificBiomes = new HashSet<String>();
 	
 	public BiomeConfiguration(ConfigCategory mainConfigSection) {
 		for (ConfigCategory child : mainConfigSection.getChildren()) {
@@ -50,6 +52,10 @@ public class BiomeConfiguration {
 				includedBiomeTypes = toBiomeTypes(property.getStringList());
 			} else if (propertyName.equalsIgnoreCase("Excluded")) {
 				excludedBiomeTypes = toBiomeTypes(property.getStringList());
+			} else if (propertyName.equalsIgnoreCase("Specific")) {
+				for (String specificBiomeName : property.getStringList()) {
+					specificBiomes.add(specificBiomeName.toLowerCase());
+				}
 			} else {
 				FMLLog.getLogger().warn("Skipping biome configuration due to unknown property name '%s'", propertyName);
 			}
@@ -66,14 +72,22 @@ public class BiomeConfiguration {
 		return result;
 	}
 	
-	public boolean matches(BiomeGenBase biome) {
+	public Match matches(BiomeGenBase biome) {
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		
-		if (existsInSet(excludedBiomeTypes, types)) {
-			return false;
+		if (hasBiomeSpecificOverride(biome)) {
+			return Match.PriorityMatch;
 		}
 		
-		return existsInSet(includedBiomeTypes, types);
+		if (existsInSet(excludedBiomeTypes, types)) {
+			return Match.NoMatch;
+		}
+		
+		return existsInSet(includedBiomeTypes, types) ? Match.Match : Match.NoMatch;
+	}
+
+	private boolean hasBiomeSpecificOverride(BiomeGenBase biome) {
+		return specificBiomes.contains(biome.biomeName.toLowerCase());
 	}
 	
 	private boolean existsInSet(Set<BiomeDictionary.Type> toSearch, BiomeDictionary.Type[] toMatch) {
@@ -96,5 +110,9 @@ public class BiomeConfiguration {
 		}
 		
 		return 0;
+	}
+	
+	public enum Match {
+		NoMatch, Match, PriorityMatch
 	}
 }

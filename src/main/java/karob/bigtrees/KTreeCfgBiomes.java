@@ -6,8 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.common.FMLLog;
 import karob.bigtrees.config.Algorithm;
 import karob.bigtrees.config.BiomeConfiguration;
+import karob.bigtrees.config.BiomeConfiguration.Match;
 import karob.bigtrees.config.TreeConfiguration;
 import karob.bigtrees.config.defaults.Defaults;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -24,18 +26,27 @@ public class KTreeCfgBiomes {
 	
 	private static List<BiomeConfiguration> biomeConfigurations = new LinkedList<BiomeConfiguration>();
 	
-	private static Map<BiomeDictionary.Type, Map<Algorithm, Integer>> treeDensityPerTreePerBiome;
-	
 	public static int getTreeDensityForBiomeType(BiomeGenBase biome, TreeConfiguration treeConfiguration) {
 		int population = 0;
+		int priorityPopulation = -1;
 		
 		for (BiomeConfiguration biomeConfiguration : biomeConfigurations) {
-			if (biomeConfiguration.matches(biome)) {
+			Match match = biomeConfiguration.matches(biome);
+			switch (match) {
+			case Match:
 				population = Math.max(population, biomeConfiguration.getPopulation(treeConfiguration));
+				break;
+			case PriorityMatch:
+				priorityPopulation = Math.max(priorityPopulation, biomeConfiguration.getPopulation(treeConfiguration));
+				break;
+			default:
+				break;	
 			}
 		}
 		
-		return population * treeConfiguration.getFrequencyMultiplier();
+		int populationToUse = priorityPopulation > 0 ? priorityPopulation : population;
+		
+		return populationToUse * treeConfiguration.getFrequencyMultiplier();
 	}
 
 	public static void init(File configFile) {
@@ -104,6 +115,9 @@ public class KTreeCfgBiomes {
 		defaultJungleDensities.put(Defaults.GreatOak, 10);
 		defaultJungleDensities.put(Defaults.SwampOak, 5);
 		
+		Map<TreeConfiguration, Integer> overriddenBirchForestDensities = new HashMap<TreeConfiguration, Integer>();
+		overriddenBirchForestDensities.put(Defaults.BigBirch, 50);
+		
 		Configuration config = new Configuration(configFile);
 		config.load();
 		
@@ -118,6 +132,7 @@ public class KTreeCfgBiomes {
 		addCategory("deserts", biomes(Type.SANDY, Type.WASTELAND, Type.MESA), biomes(Type.HILLS, Type.MOUNTAIN), defaultSandyDensities, mainParent);
 		addCategory("snowy", biomes(Type.SNOWY), noExcludes(), defaultSnowyDensities, mainParent);
 		addCategory("jungles", biomes(Type.JUNGLE), noExcludes(), defaultJungleDensities, mainParent);
+		addBiomeOverride("birchForests", biomes(BiomeGenBase.birchForest, BiomeGenBase.birchForestHills), overriddenBirchForestDensities, mainParent);
 		
 		config.save();
 	}
@@ -125,6 +140,12 @@ public class KTreeCfgBiomes {
 	private static void addCategory(String name, String[] includedBiomes, String[] excludedBiomes, Map<TreeConfiguration, Integer> treePopulation, ConfigCategory parent) {
 		ConfigCategory category = createNew(name, parent);
 		addBiomes(includedBiomes, excludedBiomes, category);
+		addTreePopulation(treePopulation, category);
+	}
+	
+	private static void addBiomeOverride(String name, String[] biomeNames, Map<TreeConfiguration, Integer> treePopulation, ConfigCategory parent) {
+		ConfigCategory category = createNew(name, parent);
+		addOverriddenBiomes(biomeNames, category);
 		addTreePopulation(treePopulation, category);
 	}
 	
@@ -142,10 +163,24 @@ public class KTreeCfgBiomes {
 		biomes.put("2", new Property("Excluded", excluded, Property.Type.STRING));
 	}
 	
+	private static void addOverriddenBiomes(String[] biomeNames, ConfigCategory parent) {
+		ConfigCategory biomes = new ConfigCategory("biometypes", parent);
+		biomes.put("1", new Property("Specific", biomeNames, Property.Type.STRING));
+	}
+	
 	private static String[] biomes(BiomeDictionary.Type ... types) {
 		List<String> strings = new LinkedList<String>();
 		for(BiomeDictionary.Type type : types) {
 			strings.add(type.name());
+		}
+		
+		return strings.toArray(new String[strings.size()]);
+	}
+	
+	private static String[] biomes(BiomeGenBase ... biomes) {
+		List<String> strings = new LinkedList<String>();
+		for(BiomeGenBase biome : biomes) {
+			strings.add(biome.biomeName);
 		}
 		
 		return strings.toArray(new String[strings.size()]);
