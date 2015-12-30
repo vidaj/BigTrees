@@ -12,7 +12,6 @@ public class WorldGenGreatOak extends KWorldGenBigTree{
 	
 	public boolean generate(World world, Random random, int x, int y, int z)
     {
-		type = 3;
 		heightAttenuation = 0.1D; //Trunk Percentage Height
         scaleWidth = 1.4D; //Branch Length
         trunkSize = 4; //Trunk Width

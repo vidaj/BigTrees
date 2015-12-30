@@ -13,7 +13,6 @@ public class WorldGenBigBirch extends KWorldGenBigTree{
 	
 	public boolean generate(World world, Random random, int x, int y, int z)
     {
-		type = 6;
 		heightAttenuation = 0.3D; //Trunk Percentage Height
         scaleWidth = 1.0D; //Branch Length
         trunkSize = 2; //Trunk Width

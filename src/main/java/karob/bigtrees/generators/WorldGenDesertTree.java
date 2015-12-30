@@ -12,8 +12,6 @@ public class WorldGenDesertTree extends KWorldGenBigTree {
 
 	@Override
 	public boolean generate(World world, Random random, int i, int j, int k) {
-		type = 1;
-
 		heightAttenuation = 0.3D; // Trunk Percentage Height
 		scaleWidth = 1.0D; // Branch Length
 		trunkSize = 2; // Trunk Width

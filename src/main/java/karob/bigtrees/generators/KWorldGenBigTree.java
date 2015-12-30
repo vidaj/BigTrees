@@ -45,7 +45,6 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
     int heightLimitLimit;
     int leafDistanceLimit;
     int[][] leafNodes;
-    int type = 0;
     Block trunkBlock;
     private int trunkMeta;
     Block leafBlock;
@@ -71,7 +70,6 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
         trunkSize = 1; // Trunk height
         heightLimitLimit = 12; // Height variation
         leafDistanceLimit = 4; // Leaf thickness
-		type = 0;
 //        KTreeCfg.init();
     }
 
@@ -997,48 +995,6 @@ rootAlt = 10;
     {
 		return generator(world, random, i, j, k);
 	}
-
-    public boolean desertGenerate(World world, Random random, int i, int j, int k)
-    {
-		type = 1;
-		return generator(world, random, i, j, k);
-	}
-
-    public boolean desertGenerate2(World world, Random random, int i, int j, int k)
-    {
-		type = 11;
-		return generator(world, random, i, j, k);
-	}
-
-    public boolean swampGenerate(World world, Random random, int i, int j, int k)
-    {
-		type = 2;
-		return generator(world, random, i, j, k);
-	}
-
-    public boolean greatGenerate(World world, Random random, int i, int j, int k)
-    {
-		type = 3;
-		return generator(world, random, i, j, k);
-	}
-
-    public boolean pineGenerate(World world, Random random, int i, int j, int k)
-    {
-		type = 4;
-		return generator(world, random, i, j, k);
-	}
-
-    public boolean blockOakGenerate(World world, Random random, int i, int j, int k)
-    {
-        type = 5;
-        return generator(world, random, i, j, k);
-    }
-
-    public boolean birchGenerate(World world, Random random, int i, int j, int k)
-    {
-        type = 6;
-        return generator(world, random, i, j, k);
-    }
 
     private boolean generator(World world, Random random, int i, int j, int k)
     {
