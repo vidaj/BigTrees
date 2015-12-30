@@ -8,6 +8,7 @@ import java.util.Random;
 
 import karob.bigtrees.config.Algorithm;
 import karob.bigtrees.config.ITreeConfigurable;
+import karob.bigtrees.config.Population;
 import karob.bigtrees.config.TreeConfiguration;
 import karob.bigtrees.generators.KWorldGenCyprusTree;
 import karob.bigtrees.generators.KWorldGenHatTree;
@@ -35,7 +36,7 @@ public class KTreeDecorate {
 		
 		int i = 0;
 		for (TreeConfiguration treeConfiguration : KTreeCfgTrees.getTreeConfigurations()) {
-			int biomePopulation = getBiomePopulation(biome, treeConfiguration);
+			Population biomePopulation = getBiomePopulation(biome, treeConfiguration);
 			
 			int currentTreeLocality = KGetLocality.locality(posX + rand.nextInt(16) + 8, posZ + rand.nextInt(16) + 8, seed + 128 * i++ + 64, 168);
 			
@@ -43,7 +44,7 @@ public class KTreeDecorate {
 				continue;
 			}
 
-			for (int currentTree = 0; currentTree < biomePopulation; currentTree++) {
+			for (int currentTree = 0; currentTree < biomePopulation.getTreesPerChunk(); currentTree++) {
 				int x = posX + rand.nextInt(16) + 8;
 				int z = posZ + rand.nextInt(16) + 8;
 				int y = world.getHeightValue(x, z);
@@ -56,7 +57,7 @@ public class KTreeDecorate {
 					continue;
 				}
 				
-				if (rand.nextInt(50 * numberoftrees) != 0) {
+				if (rand.nextInt(100) > biomePopulation.getPercentageChancePerTree()) {
 					continue;
 				}
 				
@@ -70,7 +71,7 @@ public class KTreeDecorate {
 	}
 	
 
-	private static int getBiomePopulation(BiomeGenBase biome,
+	private static Population getBiomePopulation(BiomeGenBase biome,
 			TreeConfiguration treeConfiguration) {
 		return KTreeCfgBiomes.getTreeDensityForBiomeType(biome, treeConfiguration);
 	}

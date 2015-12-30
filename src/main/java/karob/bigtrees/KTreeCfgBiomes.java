@@ -6,10 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import cpw.mods.fml.common.FMLLog;
-import karob.bigtrees.config.Algorithm;
 import karob.bigtrees.config.BiomeConfiguration;
 import karob.bigtrees.config.BiomeConfiguration.Match;
+import karob.bigtrees.config.Population;
 import karob.bigtrees.config.TreeConfiguration;
 import karob.bigtrees.config.defaults.Defaults;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -26,27 +25,34 @@ public class KTreeCfgBiomes {
 	
 	private static List<BiomeConfiguration> biomeConfigurations = new LinkedList<BiomeConfiguration>();
 	
-	public static int getTreeDensityForBiomeType(BiomeGenBase biome, TreeConfiguration treeConfiguration) {
-		int population = 0;
-		int priorityPopulation = -1;
+	public static Population getTreeDensityForBiomeType(BiomeGenBase biome, TreeConfiguration treeConfiguration) {
+		Population population = null;
+		Population priorityPopulation = null;
 		
 		for (BiomeConfiguration biomeConfiguration : biomeConfigurations) {
 			Match match = biomeConfiguration.matches(biome);
+			Population thisTreesPopulation = biomeConfiguration.getPopulation(treeConfiguration);
 			switch (match) {
 			case Match:
-				population = Math.max(population, biomeConfiguration.getPopulation(treeConfiguration));
+				if (population == null || population.getPercentageChancePerTree() > thisTreesPopulation.getPercentageChancePerTree()) {
+					population = thisTreesPopulation;
+				}
 				break;
 			case PriorityMatch:
-				priorityPopulation = Math.max(priorityPopulation, biomeConfiguration.getPopulation(treeConfiguration));
+				if (priorityPopulation == null || priorityPopulation.getPercentageChancePerTree() > thisTreesPopulation.getPercentageChancePerTree()) {
+					priorityPopulation = thisTreesPopulation;
+				}
 				break;
 			default:
 				break;	
 			}
 		}
 		
-		int populationToUse = priorityPopulation > 0 ? priorityPopulation : population;
+		if (population == null && priorityPopulation == null) {
+			return Population.NULL;
+		}
 		
-		return populationToUse * treeConfiguration.getFrequencyMultiplier();
+		return priorityPopulation != null ? priorityPopulation : population;
 	}
 
 	public static void init(File configFile) {
@@ -64,59 +70,59 @@ public class KTreeCfgBiomes {
 	}
 
 	private static void setDefaultConfigValues(File configFile) {
-		Map<TreeConfiguration, Integer> defaultForestDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultForestDensities.put(Defaults.TallOak, 50);
-		defaultForestDensities.put(Defaults.BlockOak, 20);
-		defaultForestDensities.put(Defaults.GreatOak, 5);
-		defaultForestDensities.put(Defaults.SwampOak, 4);
-		defaultForestDensities.put(Defaults.BigPine, 9);
-		defaultForestDensities.put(Defaults.BigBirch, 14);
-		defaultForestDensities.put(Defaults.Dead, 1);
+		Map<TreeConfiguration, Population> defaultForestDensities = new HashMap<TreeConfiguration, Population>();
+		defaultForestDensities.put(Defaults.TallOak,  new Population(50, 3));
+		defaultForestDensities.put(Defaults.BlockOak, new Population(20, 2));
+		defaultForestDensities.put(Defaults.GreatOak, new Population(5, 1));
+		defaultForestDensities.put(Defaults.SwampOak, new Population(4, 1));
+		defaultForestDensities.put(Defaults.BigPine,  new Population(9, 3));
+		defaultForestDensities.put(Defaults.BigBirch, new Population(14, 1));
+		defaultForestDensities.put(Defaults.Dead,     new Population(1, 1));
 		
-		Map<TreeConfiguration, Integer> defaultSwampDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultSwampDensities.put(Defaults.GreatOak, 20);
-		defaultSwampDensities.put(Defaults.SwampOak, 20);
-		defaultSwampDensities.put(Defaults.Cyprus, 20);
-		defaultSwampDensities.put(Defaults.Hat, 20);
-		defaultSwampDensities.put(Defaults.BigBirch, 1);
+		Map<TreeConfiguration, Population> defaultSwampDensities = new HashMap<TreeConfiguration, Population>();
+		defaultSwampDensities.put(Defaults.GreatOak, new Population(20, 1));
+		defaultSwampDensities.put(Defaults.SwampOak, new Population(20, 1));
+		defaultSwampDensities.put(Defaults.Cyprus,   new Population(20, 1));
+		defaultSwampDensities.put(Defaults.Hat,      new Population(20, 1));
+		defaultSwampDensities.put(Defaults.BigBirch, new Population(1, 1));
 		
-		Map<TreeConfiguration, Integer> defaultPlainsDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultPlainsDensities.put(Defaults.TallOak, 1);
-		defaultPlainsDensities.put(Defaults.BlockOak, 2);
-		defaultPlainsDensities.put(Defaults.GreatOak, 3);
-		defaultPlainsDensities.put(Defaults.BigPine, 1);
-		defaultPlainsDensities.put(Defaults.BigBirch, 1);
+		Map<TreeConfiguration, Population> defaultPlainsDensities = new HashMap<TreeConfiguration, Population>();
+		defaultPlainsDensities.put(Defaults.TallOak,  new Population(1, 1));
+		defaultPlainsDensities.put(Defaults.BlockOak, new Population(2, 1));
+		defaultPlainsDensities.put(Defaults.GreatOak, new Population(3, 1));
+		defaultPlainsDensities.put(Defaults.BigPine,  new Population(1, 1));
+		defaultPlainsDensities.put(Defaults.BigBirch, new Population(1, 1));
 		
-		Map<TreeConfiguration, Integer> defaultMountainDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultMountainDensities.put(Defaults.TallOak, 10);
+		Map<TreeConfiguration, Population> defaultMountainDensities = new HashMap<TreeConfiguration, Population>();
+		defaultMountainDensities.put(Defaults.TallOak, new Population(10, 1));
 		
-		Map<TreeConfiguration, Integer> defaultHillsDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultHillsDensities.put(Defaults.TallOak, 15);
-		defaultHillsDensities.put(Defaults.BlockOak, 6);
-		defaultHillsDensities.put(Defaults.GreatOak, 4);
-		defaultHillsDensities.put(Defaults.BigPine, 7);
-		defaultHillsDensities.put(Defaults.BigBirch, 10);
+		Map<TreeConfiguration, Population> defaultHillsDensities = new HashMap<TreeConfiguration, Population>();
+		defaultHillsDensities.put(Defaults.TallOak,  new Population(15, 1));
+		defaultHillsDensities.put(Defaults.BlockOak, new Population(26, 1));
+		defaultHillsDensities.put(Defaults.GreatOak, new Population(24, 1));
+		defaultHillsDensities.put(Defaults.BigPine,  new Population(27, 1));
+		defaultHillsDensities.put(Defaults.BigBirch, new Population(10, 1));
 		
-		Map<TreeConfiguration, Integer> defaultWaterDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultWaterDensities.put(Defaults.TallOak, 5);
-		defaultWaterDensities.put(Defaults.GreatOak, 5);
-		defaultWaterDensities.put(Defaults.SwampOak, 2);
-		defaultWaterDensities.put(Defaults.BigPine, 3);
-		defaultWaterDensities.put(Defaults.BigBirch, 5);
+		Map<TreeConfiguration, Population> defaultWaterDensities = new HashMap<TreeConfiguration, Population>();
+		defaultWaterDensities.put(Defaults.TallOak,  new Population(5, 1));
+		defaultWaterDensities.put(Defaults.GreatOak, new Population(5, 1));
+		defaultWaterDensities.put(Defaults.SwampOak, new Population(2, 1));
+		defaultWaterDensities.put(Defaults.BigPine,  new Population(3, 1));
+		defaultWaterDensities.put(Defaults.BigBirch, new Population(5, 1));
 		
-		Map<TreeConfiguration, Integer> defaultSandyDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultSandyDensities.put(Defaults.Dead, 3);
+		Map<TreeConfiguration, Population> defaultSandyDensities = new HashMap<TreeConfiguration, Population>();
+		defaultSandyDensities.put(Defaults.Dead, new Population(3, 1));
 		
-		Map<TreeConfiguration, Integer> defaultSnowyDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultSnowyDensities.put(Defaults.TallOak, 2);
-		defaultSnowyDensities.put(Defaults.BigPine, 10);
+		Map<TreeConfiguration, Population> defaultSnowyDensities = new HashMap<TreeConfiguration, Population>();
+		defaultSnowyDensities.put(Defaults.TallOak, new Population(30, 1));
+		defaultSnowyDensities.put(Defaults.BigPine, new Population(10, 1));
 		
-		Map<TreeConfiguration, Integer> defaultJungleDensities = new HashMap<TreeConfiguration, Integer>();
-		defaultJungleDensities.put(Defaults.GreatOak, 10);
-		defaultJungleDensities.put(Defaults.SwampOak, 5);
+		Map<TreeConfiguration, Population> defaultJungleDensities = new HashMap<TreeConfiguration, Population>();
+		defaultJungleDensities.put(Defaults.GreatOak, new Population(10, 1));
+		defaultJungleDensities.put(Defaults.SwampOak, new Population(5, 1));
 		
-		Map<TreeConfiguration, Integer> overriddenBirchForestDensities = new HashMap<TreeConfiguration, Integer>();
-		overriddenBirchForestDensities.put(Defaults.BigBirch, 50);
+		Map<TreeConfiguration, Population> overriddenBirchForestDensities = new HashMap<TreeConfiguration, Population>();
+		overriddenBirchForestDensities.put(Defaults.BigBirch, new Population(70, 3));
 		
 		Configuration config = new Configuration(configFile);
 		config.load();
@@ -137,13 +143,13 @@ public class KTreeCfgBiomes {
 		config.save();
 	}
 	
-	private static void addCategory(String name, String[] includedBiomes, String[] excludedBiomes, Map<TreeConfiguration, Integer> treePopulation, ConfigCategory parent) {
+	private static void addCategory(String name, String[] includedBiomes, String[] excludedBiomes, Map<TreeConfiguration, Population> treePopulation, ConfigCategory parent) {
 		ConfigCategory category = createNew(name, parent);
 		addBiomes(includedBiomes, excludedBiomes, category);
 		addTreePopulation(treePopulation, category);
 	}
 	
-	private static void addBiomeOverride(String name, String[] biomeNames, Map<TreeConfiguration, Integer> treePopulation, ConfigCategory parent) {
+	private static void addBiomeOverride(String name, String[] biomeNames, Map<TreeConfiguration, Population> treePopulation, ConfigCategory parent) {
 		ConfigCategory category = createNew(name, parent);
 		addOverriddenBiomes(biomeNames, category);
 		addTreePopulation(treePopulation, category);
@@ -190,13 +196,29 @@ public class KTreeCfgBiomes {
 		return new String[0];
 	}
 	
-	private static void addTreePopulation(Map<TreeConfiguration, Integer> population, ConfigCategory parent) {
+	private static void addTreePopulation(Map<TreeConfiguration, Population> populations, ConfigCategory parent) {
 		ConfigCategory treePopulation = new ConfigCategory("treepopulation", parent);
 		treePopulation.setComment("Contains population for each tree. Trees are specified by the name in the corresponding tree configuration file. Remember that these values are multiplied by 'frequencyMultiplier'");
 		
-		int index = 1;
-		for(Map.Entry<TreeConfiguration, Integer> entry : population.entrySet()) {
-			treePopulation.put(Integer.toString(index++), new Property(entry.getKey().getName(), Integer.toString(entry.getValue()), Property.Type.INTEGER));
+		for(Map.Entry<TreeConfiguration, Population> entry : populations.entrySet()) {
+			ConfigCategory treeCategory = new ConfigCategory(entry.getKey().getName(), treePopulation);
+			
+			Population population = entry.getValue();
+			Property percentageChancePerTree = createProperty(Population.PercentageChancePerTreeConfigKey, population.getPercentageChancePerTree());
+			Property treesPerChunk = createProperty(Population.TreesPerChunkConfigKey, population.getTreesPerChunk());
+			
+			addPropertiesToCategory(treeCategory, percentageChancePerTree, treesPerChunk);
 		}
+	}
+
+	private static void addPropertiesToCategory(ConfigCategory category, Property ... properties) {
+		int index = 1;
+		for (Property property : properties) {
+			category.put(Integer.toString(index++), property);
+		}
+	}
+	
+	private static Property createProperty(String name, int value) {
+		return new Property(name, Integer.toString(value), Property.Type.INTEGER);
 	}
 }

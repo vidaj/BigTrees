@@ -52,11 +52,11 @@ public class KTreeCfgTrees
 	private static void mapTreeNameToConfiguration() {
 		treeNameToConfiguration = new HashMap<String, TreeConfiguration>();
 		for (TreeConfiguration treeConfiguration : treeConfigurations) {
-			treeNameToConfiguration.put(treeConfiguration.getName(), treeConfiguration);
+			treeNameToConfiguration.put(treeConfiguration.getName().toLowerCase(), treeConfiguration);
 		}
 	}
 
 	public static TreeConfiguration getTreeConfiguration(String treeName) {
-		return treeNameToConfiguration.get(treeName);
+		return treeNameToConfiguration.get(treeName.toLowerCase());
 	}
 }

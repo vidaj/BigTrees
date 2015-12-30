@@ -19,7 +19,7 @@ public class BiomeConfiguration {
 	
 	private Set<BiomeDictionary.Type> excludedBiomeTypes = new HashSet<BiomeDictionary.Type>();
 	
-	private Map<TreeConfiguration, Integer> treePopulation = new HashMap<TreeConfiguration, Integer>();
+	private Map<TreeConfiguration, Population> treePopulation = new HashMap<TreeConfiguration, Population>();
 	
 	private Set<String> specificBiomes = new HashSet<String>();
 	
@@ -34,10 +34,22 @@ public class BiomeConfiguration {
 		}
 	}
 
-	private void handleTreePopulation(ConfigCategory child) {
-		for (Entry<String, Property> entry : child.entrySet()) {
-			String treeName = entry.getKey();
-			int population = entry.getValue().getInt();
+	private void handleTreePopulation(ConfigCategory treePopulationCategory) {
+		for (ConfigCategory treeConfig: treePopulationCategory.getChildren()) {
+			String treeName = treeConfig.getName();
+			
+			int percentageChancePerChunk = 0;
+			int treesPerChunk = 0;
+			for (Entry<String, Property> entry : treeConfig.entrySet()) {
+				if (entry.getKey().equals(Population.PercentageChancePerTreeConfigKey)) {
+					percentageChancePerChunk = entry.getValue().getInt();
+				}
+				else if (entry.getKey().equals(Population.TreesPerChunkConfigKey)) {
+					treesPerChunk = entry.getValue().getInt();
+				}
+			}
+			
+			Population population = new Population(percentageChancePerChunk, treesPerChunk);
 			
 			treePopulation.put(KTreeCfgTrees.getTreeConfiguration(treeName), population);
 		}
@@ -104,12 +116,12 @@ public class BiomeConfiguration {
 		return false;
 	}
 	
-	public int getPopulation(TreeConfiguration treeConfiguration) {
+	public Population getPopulation(TreeConfiguration treeConfiguration) {
 		if (treePopulation.containsKey(treeConfiguration)) {
 			return treePopulation.get(treeConfiguration);
 		}
 		
-		return 0;
+		return Population.NULL;
 	}
 	
 	public enum Match {
