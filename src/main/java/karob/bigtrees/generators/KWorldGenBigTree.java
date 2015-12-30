@@ -1054,138 +1054,22 @@ rootAlt = 10;
         	return false;
         }
         
-        int qq;
-        boolean qbirch = false;
-/*        if(heightLimit == 0)
-        {
-            heightLimit = 5 + rand.nextInt(heightLimitLimit);
-        }
-*/
-        if(type == 1) qq = rand.nextInt(8) + 86; // Dead desert trees.
-        else if(type == 2) qq = 0; // Big swamp trees.
-        else if(type == 3) qq = 0; // Great oak trees.
-        else if(type == 4) qq = 30; // Large pine trees.
-        else if(type == 5 || type == 6) qq = 80; // Block oak trees/ birch.
-        else qq = rand.nextInt(94); //kam - sponge plant is turned off
-        if(type == 6) qbirch = true;
-        if(type == 11){
-            type = 1;
-            qq = 87;
-        }
-//qq=89;
+        int[] heightvector = {heightmin, heightmax-heightmin};
+        heightLimit = KTreeCfg.vary(rand,heightvector);
         
-	int[] heightvector = {heightmin, heightmax-heightmin};
-	heightLimit = KTreeCfg.vary(rand,heightvector);
-        if(qq < 8){
-            //WIDE TREE
-            //heightLimit = KTreeCfg.vary(rand,oak2Height); //Tree Height
-            heightAttenuation = 0.1D; //Trunk Percentage Height
-            scaleWidth = 1.4D; //Branch Length
-            trunkSize = 4; //Trunk Width
-            heightLimitLimit = 4; //Height Variation
-            leafDistanceLimit = 4; //Leaf Thickness
-            //trunkBlock = woodBlock;
-            //trunkMeta = woodMeta;
-            //leafBlock = leafBlock;
-            //leafMeta = leafMeta;
-        }else if(qq < 40){
-            //TALL TREE
-            //heightLimit = KTreeCfg.vary(rand,KTreeCfg.pine1Height); //Tree Height
-            heightAttenuation = 0.3D; //Trunk Percentage Height
-            scaleWidth = 1.2D; //Branch Length
-            trunkSize = 3; //Trunk Width
-            heightLimitLimit = 3; //Height Variation
-            leafDistanceLimit = 4; //Leaf Thickness
-            //trunkBlock = Block.getBlockById(KTreeCfg.pine1WoodType);
-            //trunkMeta = KTreeCfg.pine1WoodMeta;
-            //leafBlock = Block.getBlockById(KTreeCfg.pine1LeafType);
-            //leafMeta = KTreeCfg.pine1LeafMeta;
-        }else if(qq < 90){
-            //BIGGER TREE
-            //heightLimit = KTreeCfg.vary(rand,KTreeCfg.oak1Height); //Tree Height
-            heightAttenuation = 0.3D; //Trunk Percentage Height
-            scaleWidth = 1.0D; //Branch Length
-            trunkSize = 2; //Trunk Width
-            heightLimitLimit = 3; //Height Variation
-            leafDistanceLimit = 4; //Leaf Thickness
-            //trunkBlock = Block.getBlockById(KTreeCfg.oak1WoodType);
-            //trunkMeta = KTreeCfg.oak1WoodMeta;
-            //leafBlock = Block.getBlockById(KTreeCfg.oak1LeafType);
-            //leafMeta = KTreeCfg.oak1LeafMeta;
-            if(qbirch){
-                heightLimit = KTreeCfg.vary(rand,KTreeCfg.birchHeight);
-                //trunkBlock = Block.getBlockById(KTreeCfg.birchWoodType);
-                //trunkMeta = KTreeCfg.birchWoodMeta;
-                //leafBlock = Block.getBlockById(KTreeCfg.birchLeafType);
-                //leafMeta = KTreeCfg.birchLeafMeta;
-            }
-        }else if(qq < 95){
-            //DEAD TREE
-            //heightLimit = KTreeCfg.vary(rand,KTreeCfg.stubHeight); //Tree Height
-            heightAttenuation = 0.3D; //Trunk Percentage Height
-            scaleWidth = 1.0D; //Branch Length
-            trunkSize = 2; //Trunk Width
-            heightLimitLimit = 3; //Height Variation
-            leafDistanceLimit = 0; //Leaf Thickness
-            //trunkBlock = Block.getBlockById(KTreeCfg.stubWoodType);
-            //trunkMeta = KTreeCfg.stubWoodMeta;
+        rootRand = rand.nextInt(4);
+        if(generateLeafNodeList()){ //Generate tree and branch arrays.
+        	 //world.lightUpdates = false;
+	         generateLeaves(); //Grow leaves from branches.
+	         generateTrunk(); //Add trunk blocks to world.
+	         generateLeafNodeBases(); //Add branch blocks to world.
+	         //world.lightUpdates = true;
+	         worldObject = null;
+	         return true;
         }else{
-            //VINEY FUNGUS
-            heightLimit = 5; //Tree Height
-            heightAttenuation = 0.1D; //Trunk Percentage Height
-            scaleWidth = 2.0D; //Branch Length
-            trunkSize = 0; //Trunk Width
-            heightLimitLimit = 0; //Height Variation
-            leafDistanceLimit = 0; //Leaf Thickness
-            trunkBlock = Blocks.sponge; //Sponge
-            leafBlock = Blocks.sponge;
-        }
-        if(type == 1){
-            if(trunkSize != 1){
-              scaleWidth = scaleWidth * 1.0D; //Double branch length on desert trees.
-              //heightLimit = KTreeCfg.vary(rand,KTreeCfg.deadHeight); //Tree Height
-            }
-            leafDistanceLimit = 0; //No leaves on desert trees.
-            //trunkBlock = Block.getBlockById(KTreeCfg.deadWoodType);
-            //trunkMeta = KTreeCfg.deadWoodMeta;
-        }else if(type == 2){
-            //heightLimit = KTreeCfg.vary(rand,KTreeCfg.swoakHeight); //Tree Height
-            heightAttenuation = 0.0D; //Lower branches on swamp trees.
-            //trunkBlock = Block.getBlockById(KTreeCfg.swoakWoodType);
-            //trunkMeta = KTreeCfg.swoakWoodMeta;
-            //leafBlock = Block.getBlockById(KTreeCfg.swoakLeafType);
-            //leafMeta = KTreeCfg.swoakLeafMeta;
-        }
-        if(heightLimitLimit > 0)
-            heightLimit = heightLimit + rand.nextInt(heightLimitLimit*2) - heightLimitLimit;
-        if(!validTreeLocation())
-        {
-            return false;
-        } else
-        {
-            rootRand = rand.nextInt(4);
-            if(generateLeafNodeList()){ //Generate tree and branch arrays.
-//world.lightUpdates = false;
-             generateLeaves(); //Grow leaves from branches.
-             generateTrunk(); //Add trunk blocks to world.
-             generateLeafNodeBases(); //Add branch blocks to world.
-//world.lightUpdates = true;
-             return true;
-            }else{return false;}
-        }
-
-/*        if(!validTreeLocation())
-        {
-            return false;
-        } else
-        {
-            generateLeafNodeList();
-            generateLeaves();
-            generateTrunk();
-            generateLeafNodeBases();
-            return true;
-        }
-*/
+        	worldObject = null;
+        	return false;
+    	}
     }
 
 	@Override

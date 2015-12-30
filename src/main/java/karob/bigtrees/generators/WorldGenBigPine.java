@@ -13,6 +13,11 @@ public class WorldGenBigPine extends KWorldGenBigTree{
 	public boolean generate(World world, Random random, int x, int y, int z)
     {
 		type = 4;
+		heightAttenuation = 0.3D; //Trunk Percentage Height
+        scaleWidth = 1.2D; //Branch Length
+        trunkSize = 3; //Trunk Width
+        heightLimitLimit = 3; //Height Variation
+        leafDistanceLimit = 4; //Leaf Thickness
 		return super.generate(world, random, x, y, z);
 	}
 }
