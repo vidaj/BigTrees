@@ -18,8 +18,6 @@ public class TreeConfiguration {
 
 	protected int maxHeight;
 
-	protected int frequencyMultiplier;
-
 	protected BlockAndMeta wood;
 
 	protected BlockAndMeta leaf;
@@ -71,7 +69,6 @@ public class TreeConfiguration {
 	//
 	
 	public TreeConfiguration() {
-		frequencyMultiplier = 10;
 		minStunt = 7;
 		baseBlocks = new ArrayList<BlockAndMeta>();
 		baseBlocks.add(new BlockAndMeta(Blocks.grass));
@@ -93,10 +90,6 @@ public class TreeConfiguration {
 
 	public int getMaxHeight() {
 		return maxHeight;
-	}
-
-	public int getFrequencyMultiplier() {
-		return frequencyMultiplier;
 	}
 
 	public BlockAndMeta getWood() {
@@ -194,9 +187,6 @@ public class TreeConfiguration {
 				"Height Min", defaults.getMinHeight(), "Minimum height in blocks").getInt();
 		maxHeight = config.get("Tree Configuration Settings",
 				"Height Max", defaults.getMaxHeight(), "Maximum height in blocks").getInt();
-		frequencyMultiplier = config.get("Tree Configuration Settings",
-				"Frequency", defaults.getFrequencyMultiplier(),
-				"Used to generate default biome group densities").getInt();
 		String woodName = config
 				.get("Tree Configuration Settings",
 						"Wood Name",

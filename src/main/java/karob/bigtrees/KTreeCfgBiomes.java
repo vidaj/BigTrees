@@ -198,7 +198,7 @@ public class KTreeCfgBiomes {
 	
 	private static void addTreePopulation(Map<TreeConfiguration, Population> populations, ConfigCategory parent) {
 		ConfigCategory treePopulation = new ConfigCategory("treepopulation", parent);
-		treePopulation.setComment("Contains population for each tree. Trees are specified by the name in the corresponding tree configuration file. Remember that these values are multiplied by 'frequencyMultiplier'");
+		treePopulation.setComment("Contains population for each tree. Trees are specified by the name in the corresponding tree configuration file.");
 		
 		for(Map.Entry<TreeConfiguration, Population> entry : populations.entrySet()) {
 			ConfigCategory treeCategory = new ConfigCategory(entry.getKey().getName(), treePopulation);
