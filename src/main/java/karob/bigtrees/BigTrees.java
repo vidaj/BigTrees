@@ -35,44 +35,44 @@ public class BigTrees {
 		
 		KTreeCfg.init(event.getModConfigurationDirectory());
 		
-		registerBlock(new BlockBTSapling().setBlockName("bt_bigSapling"),ItemBlockSapling.class);
+//		registerBlock(new BlockBTSapling().setBlockName("bt_bigSapling"),ItemBlockSapling.class);
 	}
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 0), new Object[] { "#", "X", "X",
-						'#', new ItemStack(Blocks.sapling, 1, 0), 'X',
-						new ItemStack(Blocks.log, 1, 0) });
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 1), new Object[] { "#", "X", "X",
-						'#', new ItemStack(Blocks.sapling, 1, 2), 'X',
-						new ItemStack(Blocks.log, 1, 2) });
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 2), new Object[] { "#", "X", "X",
-						'#', new ItemStack(Blocks.sapling, 1, 1), 'X',
-						new ItemStack(Blocks.log, 1, 1) });
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 4), new Object[] { " # ", " X ",
-						"X X", '#', new ItemStack(Blocks.sapling, 1, 1), 'X',
-						new ItemStack(Blocks.log, 1, 1) });
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 3), new Object[] { "###", " X ",
-						" X ", '#', Items.stick, 'X',
-						new ItemStack(Blocks.log, 1, 0) });
-		GameRegistry.addRecipe(
-				new ItemStack(GameRegistry.findBlock("bigtrees",
-						"bt_bigSapling"), 1, 5), new Object[] { " # ", "#X#",
-						'#', new ItemStack(Blocks.sapling, 1, 0), 'X',
-						new ItemStack(Blocks.log, 1, 0) });// saplings and
-															// recipes changed
-															// to use only one
-															// block id.
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 0), new Object[] { "#", "X", "X",
+//						'#', new ItemStack(Blocks.sapling, 1, 0), 'X',
+//						new ItemStack(Blocks.log, 1, 0) });
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 1), new Object[] { "#", "X", "X",
+//						'#', new ItemStack(Blocks.sapling, 1, 2), 'X',
+//						new ItemStack(Blocks.log, 1, 2) });
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 2), new Object[] { "#", "X", "X",
+//						'#', new ItemStack(Blocks.sapling, 1, 1), 'X',
+//						new ItemStack(Blocks.log, 1, 1) });
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 4), new Object[] { " # ", " X ",
+//						"X X", '#', new ItemStack(Blocks.sapling, 1, 1), 'X',
+//						new ItemStack(Blocks.log, 1, 1) });
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 3), new Object[] { "###", " X ",
+//						" X ", '#', Items.stick, 'X',
+//						new ItemStack(Blocks.log, 1, 0) });
+//		GameRegistry.addRecipe(
+//				new ItemStack(GameRegistry.findBlock("bigtrees",
+//						"bt_bigSapling"), 1, 5), new Object[] { " # ", "#X#",
+//						'#', new ItemStack(Blocks.sapling, 1, 0), 'X',
+//						new ItemStack(Blocks.log, 1, 0) });// saplings and
+//															// recipes changed
+//															// to use only one
+//															// block id.
 	}
 
 	// moved most of decoration to a new file
