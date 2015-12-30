@@ -4,9 +4,11 @@
 
 package karob.bigtrees.generators;
 
+import java.util.List;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.ITreeConfigurable;
 import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.block.Block;
@@ -32,13 +34,12 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
     int rootAlt;
     private Block cyprusWoodBlock;
     private Block cyprusLeafBlock;
-    private Block cyprusBaseBlock1;
-    private Block cyprusBaseBlock2;
     private int woodMeta;
     private int leafMeta;
     private int stuntmin;
     private int heightmin;
     private int heightmax;
+	
 
     public KWorldGenCyprusTree(boolean flag)
     {
@@ -66,13 +67,10 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
         Block id;
         //If tree is generated, require base to be of certain blocktypes.
         if(!planted){
-          if(cyprusBaseBlock1 != Blocks.air || cyprusBaseBlock2 != Blocks.air){
-            boolean flag = false;
-            id = this.getBlock(i, j - 1, k);
-            if(cyprusBaseBlock1 != Blocks.air && id == cyprusBaseBlock1) flag = true;
-            if(cyprusBaseBlock2 != Blocks.air && id == cyprusBaseBlock2) flag = true;
-            if(flag == false) return false;
-          }
+	    	if (!isSupportedBaseBlock(i, j - 1, k)) {
+				return false;
+			}
+        	
           //bottom block of tree must be empty
           id = this.getBlock(i, j, k);
           if(id != Blocks.air && id != cyprusLeafBlock) return false;
@@ -628,12 +626,11 @@ else dug = true;
 
 	@Override
 	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		cyprusWoodBlock = treeConfiguration.getWood();
-    	cyprusLeafBlock = treeConfiguration.getLeaf();
-    	cyprusBaseBlock1 = treeConfiguration.getBaseBlock1();
-    	cyprusBaseBlock2 = treeConfiguration.getBaseBlock2();
-		woodMeta = treeConfiguration.getWoodMeta();
-		leafMeta = treeConfiguration.getLeafMeta();
+		cyprusWoodBlock = treeConfiguration.getWood().getBlock();
+    	cyprusLeafBlock = treeConfiguration.getLeaf().getBlock();
+    	baseblocks = treeConfiguration.getBaseBlocks();
+		woodMeta = treeConfiguration.getWood().getMeta();
+		leafMeta = treeConfiguration.getLeaf().getMeta();
 		heightmin = treeConfiguration.getMinHeight();
 		heightmax = treeConfiguration.getMaxHeight();
 		stuntmin = treeConfiguration.getMinStunt();

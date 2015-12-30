@@ -31,8 +31,6 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 	private boolean planted;
 	private Block tallWoodBlock;
 	private Block tallLeafBlock;
-	private Block tallBaseBlock1;
-	private Block tallBaseBlock2;
 	private int woodMeta;
 	private int leafMeta;
 	private int heightmin;
@@ -66,12 +64,11 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 	}
 	
 	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		tallWoodBlock = treeConfiguration.getWood();
-		tallLeafBlock = treeConfiguration.getLeaf();
-		tallBaseBlock1 = treeConfiguration.getBaseBlock1();
-		tallBaseBlock2 = treeConfiguration.getBaseBlock2();
-		woodMeta = treeConfiguration.getWoodMeta();
-		leafMeta = treeConfiguration.getLeafMeta();
+		tallWoodBlock = treeConfiguration.getWood().getBlock();
+		tallLeafBlock = treeConfiguration.getLeaf().getBlock();
+		baseblocks = treeConfiguration.getBaseBlocks();
+		woodMeta = treeConfiguration.getWood().getMeta();
+		leafMeta = treeConfiguration.getLeaf().getMeta();
 		heightmin = treeConfiguration.getMinHeight();
 		heightmax = treeConfiguration.getMaxHeight();
 		stuntmin = treeConfiguration.getMinStunt();
@@ -133,16 +130,10 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 		Block id;
 		// If tree is generated, require base to be of certain blocktypes.
 		if (!planted) {
-			if (tallBaseBlock1 != Blocks.air || tallBaseBlock2 != Blocks.air) {
-				boolean flag = false;
-				id = this.getBlock(i, j - 1, k);
-				if (tallBaseBlock1 != Blocks.air && id == tallBaseBlock1)
-					flag = true;
-				if (tallBaseBlock2 != Blocks.air && id == tallBaseBlock2)
-					flag = true;
-				if (flag == false)
-					return false;
+			if (!isSupportedBaseBlock(i, j - 1, k)) {
+				return false;
 			}
+			
 			// bottom block of tree must be empty
 			id = this.getBlock(i, j, k);
 			if (id != Blocks.air && id != tallLeafBlock)
@@ -162,10 +153,6 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 		int zzz = random
 				.nextInt((int) (100 * (branchlessmax - branchlessmin) + branchlessmin));
 		m = l * zzz / 100 + j;
-		// Get rid of grass
-		id = this.getBlock(i, j - 1, k);
-		if (!planted && tallBaseBlock1 != Blocks.air && id == tallBaseBlock2)
-			this.setBlock(i, j - 1, k, tallBaseBlock1);
 		// First block of trunk.
 		this.setBlockAndMetadata(i, j, k, tallWoodBlock, woodMeta);
 		// Grow taproot

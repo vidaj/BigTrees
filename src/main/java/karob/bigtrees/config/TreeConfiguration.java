@@ -1,7 +1,9 @@
 package karob.bigtrees.config;
 
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
@@ -18,19 +20,13 @@ public class TreeConfiguration {
 
 	protected int frequencyMultiplier;
 
-	protected Block wood;
+	protected BlockAndMeta wood;
 
-	protected int woodMeta;
-
-	protected Block leaf;
-
-	protected int leafMeta;
+	protected BlockAndMeta leaf;
 
 	protected int minStunt;
-
-	protected Block baseBlock1;
-
-	protected Block baseBlock2;
+	
+	protected List<BlockAndMeta> baseBlocks;
 
 	protected int locality;
 
@@ -77,8 +73,9 @@ public class TreeConfiguration {
 	public TreeConfiguration() {
 		frequencyMultiplier = 10;
 		minStunt = 7;
-		baseBlock1 = Blocks.grass;
-		baseBlock2 = Blocks.dirt;
+		baseBlocks = new ArrayList<BlockAndMeta>();
+		baseBlocks.add(new BlockAndMeta(Blocks.grass));
+		baseBlocks.add(new BlockAndMeta(Blocks.dirt));
 		locality = 1;
 	}
 	
@@ -102,32 +99,20 @@ public class TreeConfiguration {
 		return frequencyMultiplier;
 	}
 
-	public Block getWood() {
+	public BlockAndMeta getWood() {
 		return wood;
 	}
 
-	public int getWoodMeta() {
-		return woodMeta;
-	}
-
-	public Block getLeaf() {
+	public BlockAndMeta getLeaf() {
 		return leaf;
-	}
-
-	public int getLeafMeta() {
-		return leafMeta;
 	}
 
 	public int getMinStunt() {
 		return minStunt;
 	}
 
-	public Block getBaseBlock1() {
-		return baseBlock1;
-	}
-
-	public Block getBaseBlock2() {
-		return baseBlock2;
+	public List<BlockAndMeta> getBaseBlocks() {
+		return baseBlocks;
 	}
 
 	public int getLocality() {
@@ -215,39 +200,42 @@ public class TreeConfiguration {
 		String woodName = config
 				.get("Tree Configuration Settings",
 						"Wood Name",
-						getBlockName(defaults.getWood()),
-						"Minecraft names are log and log2. For mod-added names, use modID:name, e.g., BiomesOPlenty:logs1.")
+						getBlockString(defaults.getWood()),
+						"Minecraft names are minecraft:log:meta and minecraft:log2:meta. For mod-added names, use modID:name, e.g., BiomesOPlenty:logs1. Meta values: 0-3 for upward facing logs. For wood name log:0=oak, 1=pine, 2=birch, 3=jungle. For log2, 0=acacia, 1=darkoak.")
 				.getString();
-		woodMeta = config
-				.get("Tree Configuration Settings",
-						"Wood Meta",
-						defaults.getWoodMeta(),
-						"0-3 for upward facing logs. For wood name log:0=oak, 1=pine, 2=birch, 3=jungle. For log2, 0=acacia, 1=darkoak.")
-				.getInt();
+		wood = new BlockAndMeta(woodName);
+//		woodMeta = config
+//				.get("Tree Configuration Settings",
+//						"Wood Meta",
+//						defaults.getWoodMeta(),
+//						"0-3 for upward facing logs. For wood name log:0=oak, 1=pine, 2=birch, 3=jungle. For log2, 0=acacia, 1=darkoak.")
+//				.getInt();
 		String leafName = config
 				.get("Tree Configuration Settings",
 						"Leaf Name",
-						getBlockName(defaults.getLeaf()),
-						"Minecraft names are leaves and leaves2. For mod-added names, use modID:name, e.g., BiomesOPlenty:leaves1.")
+						getBlockString(defaults.getLeaf()),
+						"Minecraft names are minecraft:leaves:meta and minecraft:leaves2:meta. For mod-added names, use modID:name, e.g., BiomesOPlenty:leaves1. Meta values: 0-3. For leaf name leaves:0=oak, 1=pine, 2=birch, 3=jungle. For leaves2, 0=acacia, 1=darkoak.")
 				.getString();
-		leafMeta = config
-				.get("Tree Configuration Settings",
-						"Leaf Meta",
-						defaults.getLeafMeta(),
-						"values are 0-3. For leaf name leaves:0=oak, 1=pine, 2=birch, 3=jungle. For leaves2, 0=acacia, 1=darkoak.")
-				.getInt();
+		leaf = new BlockAndMeta(leafName);
+//		leafMeta = config
+//				.get("Tree Configuration Settings",
+//						"Leaf Meta",
+//						defaults.getLeafMeta(),
+//						"values are 0-3. For leaf name leaves:0=oak, 1=pine, 2=birch, 3=jungle. For leaves2, 0=acacia, 1=darkoak.")
+//				.getInt();
 		minStunt = config
 				.get("Tree Configuration Settings",
 						"Stunt Minimum",
 						defaults.getMinStunt(),
 						"Trees are stunted when blocked by overhead obstacles, but no shorter than this value.")
 				.getInt();
-		String baseblock1 = config.get("Tree Configuration Settings",
-				"Base Type 1", getBlockName(defaults.getBaseBlock1()), "block that the tree can grow on")
-				.getString();
-		String baseblock2 = config.get("Tree Configuration Settings",
-				"Base Type 2", getBlockName(defaults.getBaseBlock2()), "block that the tree can grow on")
-				.getString();
+		
+		
+		String[] baseblockNames = config.get("Tree Configuration Settings",
+				"Base Blocks", getBaseBlockNames(defaults.getBaseBlocks()), "block that the tree can grow on")
+				.getStringList();
+		baseBlocks = getBlocksFromNames(baseblockNames);
+		
 		locality = config
 				.get("Tree Configuration Settings",
 						"Locality Distribution Type",
@@ -258,11 +246,6 @@ public class TreeConfiguration {
 				"Locality Min", defaults.getMinLocality(), "0 to 144").getInt();
 		maxLocality = config.get("Tree Configuration Settings",
 				"Locality Max", defaults.getMaxLocality(), "0 to 144").getInt();
-		
-		wood = getBlock(woodName);
-		leaf = getBlock(leafName);
-		baseBlock1 = getBlock(baseblock1, Blocks.dirt);
-		baseBlock2 = getBlock(baseblock2, Blocks.grass);
 		
 		if (algorithm == Algorithm.TallOak) {
 			minBranchless = Double.parseDouble(config.get("Tree Configuration Settings", "Branchless Min", defaults.minBranchless,"Fraction of tree height which has no branches").getString());
@@ -282,34 +265,35 @@ public class TreeConfiguration {
 		}
 	}
 	
-	private Block getBlock(String name) {
-		String[] nameItems = name.split(":");
+	private String[] getBaseBlockNames(List<BlockAndMeta> baseBlocks) {
+		List<String> result = new LinkedList<String>();
 		
-		if (nameItems.length == 2) {
-			return GameRegistry.findBlock(nameItems[0], nameItems[1]);
+		for (BlockAndMeta block : baseBlocks) {
+			result.add(block.toString());
 		}
 		
-		return Block.getBlockFromName(name);
+		return result.toArray(new String[result.size()]);
 	}
 	
-	private Block getBlock(String name, Block defaultIfMissing) {
-		Block block = getBlock(name);
-		
-		if (block != null) {
-			return block;
+	private String getBlockString(BlockAndMeta blockAndMeta) {
+		if (blockAndMeta == null) {
+			return "";
 		}
 		
-		return defaultIfMissing;
+		return blockAndMeta.toString();
+	}
+	
+	private List<BlockAndMeta> getBlocksFromNames(String[] blockNames) {
+		List<BlockAndMeta> result = new LinkedList<BlockAndMeta>();
+		
+		for (String blockName : blockNames) {
+			result.add(new BlockAndMeta(blockName));
+		}
+		
+		return result;
 	}
 
 	public void setLocality(int locality) {
 		this.locality = locality;
-	}
-	
-	private String getBlockName(Block block) {
-		if (block == null) {
-			return "";
-		}
-		return GameData.getBlockRegistry().getNameForObject(block);
 	}
 }

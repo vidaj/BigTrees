@@ -1,6 +1,7 @@
 package karob.bigtrees.config.defaults;
 
 import karob.bigtrees.config.Algorithm;
+import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.init.Blocks;
 
@@ -10,12 +11,8 @@ public class TallOakTreeDefaults extends TreeConfiguration {
 		name = "Tall Oak";
 		minHeight = 13;
 		maxHeight = 28;
-		wood = Blocks.log;
-		woodMeta = 0;
-		leaf = Blocks.leaves;
-		leafMeta = 0;
-		baseBlock1 = Blocks.grass;
-		baseBlock2 = Blocks.dirt;
+		wood = new BlockAndMeta(Blocks.log, 0);
+		leaf = new BlockAndMeta(Blocks.leaves, 0);
 		locality = 1;
 		minLocality = 0;
 		maxLocality = 40;

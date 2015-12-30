@@ -975,35 +975,10 @@ rootAlt = 10;
 
     boolean validTreeLocation()
     {
-/*        int ai[] = {
-            basePos[0], basePos[1], basePos[2]
-        };
-        int ai1[] = {
-            basePos[0], (basePos[1] + heightLimit) - 1, basePos[2]
-        };
-*/
-        Block i = this.getBlock(basePos[0], basePos[1] - 1, basePos[2]);
-      //if(basePos[1] + heightLimit >= 80) return false;
-        if(i != Blocks.grass && i != Blocks.dirt && i != Blocks.sand) //Can grow tree on dirt, grass, or sand...
-        {
-            return false;
-        }
-/*
-        int j = checkBlockLine(ai, ai1);
-        if(j == -1)
-        {
-            return true;
-        }
-        if(j < 6)
-        {
-            return false;
-        } else
-        {
-            heightLimit = j;
-            return true;
-//            return false;
-        }
-*/
+    	if (!isSupportedBaseBlock(basePos[0], basePos[1] - 1, basePos[2])) {
+    		return false;
+    	}
+
         return true;
     }
 
@@ -1215,14 +1190,13 @@ rootAlt = 10;
 
 	@Override
 	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		trunkBlock = treeConfiguration.getWood();
-    	leafBlock = treeConfiguration.getLeaf();
-//    	baseBlock1 = treeConfiguration.getBaseBlock1();
-//    	baseBlock2 = treeConfiguration.getBaseBlock2();
-		trunkMeta = treeConfiguration.getWoodMeta();
-		leafMeta = treeConfiguration.getLeafMeta();
+		trunkBlock = treeConfiguration.getWood().getBlock();
+    	leafBlock = treeConfiguration.getLeaf().getBlock();
+		trunkMeta = treeConfiguration.getWood().getMeta();
+		leafMeta = treeConfiguration.getLeaf().getMeta();
 		heightmin = treeConfiguration.getMinHeight();
 		heightmax = treeConfiguration.getMaxHeight();
 		stuntmin = treeConfiguration.getMinStunt();
+		baseblocks = treeConfiguration.getBaseBlocks();
 	}
 }

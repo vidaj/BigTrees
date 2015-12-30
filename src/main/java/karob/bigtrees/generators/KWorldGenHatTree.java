@@ -31,8 +31,6 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
     private int baseY;
     private Block hatWoodBlock;
     private Block hatLeafBlock;
-    private Block hatBaseBlock1;
-    private Block hatBaseBlock2;
     private int woodMeta;
     private int leafMeta;
     private int stuntmin;
@@ -71,13 +69,10 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
         Block id;
         //If tree is generated, require base to be of certain blocktypes.
         if(!planted){
-          if(hatBaseBlock1 != Blocks.air || hatBaseBlock2 != Blocks.air){
-            boolean flag = false;
-            id = this.getBlock(i, j - 1, k);
-            if(hatBaseBlock1 != Blocks.air && id == hatBaseBlock1) flag = true;
-            if(hatBaseBlock2 != Blocks.air && id == hatBaseBlock2) flag = true;
-            if(flag == false) return false;
-          }
+    	if (!isSupportedBaseBlock(i, j - 1, k)) {
+			return false;
+		}
+    	
           //bottom block of tree must be empty
           id = this.getBlock(i, j, k);
           if(id != Blocks.air && id != hatLeafBlock) return false;
@@ -732,12 +727,11 @@ if(size == 0){
 
 	@Override
 	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		hatWoodBlock = treeConfiguration.getWood();
-    	hatLeafBlock = treeConfiguration.getLeaf();
-    	hatBaseBlock1 = treeConfiguration.getBaseBlock1();
-    	hatBaseBlock2 = treeConfiguration.getBaseBlock2();
-		woodMeta = treeConfiguration.getWoodMeta();
-		leafMeta = treeConfiguration.getLeafMeta();
+		hatWoodBlock = treeConfiguration.getWood().getBlock();
+    	hatLeafBlock = treeConfiguration.getLeaf().getBlock();
+    	baseblocks = treeConfiguration.getBaseBlocks();
+		woodMeta = treeConfiguration.getWood().getMeta();
+		leafMeta = treeConfiguration.getLeaf().getMeta();
 		heightmin = treeConfiguration.getMinHeight();
 		heightmax = treeConfiguration.getMaxHeight();
 		stuntmin = treeConfiguration.getMinStunt();
