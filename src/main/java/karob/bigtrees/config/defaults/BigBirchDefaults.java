@@ -13,8 +13,7 @@ public class BigBirchDefaults extends TreeConfiguration {
 		maxHeight = 24;
 		wood = new BlockAndMeta(Blocks.log, 2);
 		leaf = new BlockAndMeta(Blocks.leaves, 2);
-		locality = 5;
-		minLocality = 0;
-		maxLocality = 60;
+		minNoiseValue = 0;
+		maxNoiseValue = 60;
 	}
 }

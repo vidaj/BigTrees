@@ -13,9 +13,8 @@ public class TallOakTreeDefaults extends TreeConfiguration {
 		maxHeight = 28;
 		wood = new BlockAndMeta(Blocks.log, 0);
 		leaf = new BlockAndMeta(Blocks.leaves, 0);
-		locality = 1;
-		minLocality = 0;
-		maxLocality = 40;
+		minNoiseValue = 0;
+		maxNoiseValue = 40;
 		
 		minBranchless = 0.23;
 		maxBranchless = 0.32;

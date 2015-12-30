@@ -13,8 +13,7 @@ public class HatDefaults extends TreeConfiguration{
 		maxHeight = 32;
 		wood = new BlockAndMeta(Blocks.log, 0);
 		leaf = new BlockAndMeta(Blocks.leaves, 0);
-		locality = 3;
-		minLocality = 0;
-		maxLocality = 90;
+		minNoiseValue = 0;
+		maxNoiseValue = 90;
 	}
 }

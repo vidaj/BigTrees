@@ -2,9 +2,11 @@ package karob.bigtrees;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import karob.bigtrees.config.BiomeConfiguration;
 import karob.bigtrees.config.BiomeConfiguration.Match;
@@ -63,10 +65,44 @@ public class KTreeCfgBiomes {
 		Configuration config = new Configuration(configFile);
 		config.load();
 		
+		loadBiomeConfigs(config);
+		loadGeneralSettings(config);
+	}
+
+	private static void loadBiomeConfigs(Configuration config) {
 		ConfigCategory biomeConfigurationsFromFile = config.getCategory("biomeconfiguration");
 		for (ConfigCategory biomeConfiguration : biomeConfigurationsFromFile.getChildren()) {
 			biomeConfigurations.add(new BiomeConfiguration(biomeConfiguration));
 		}
+	}
+
+	private static void loadGeneralSettings(Configuration config) {
+		ConfigCategory generalSettings = config.getCategory("general");
+		
+		for(Map.Entry<String, Property> entry : generalSettings.entrySet()) {
+			String key = entry.getKey();
+			Property property = entry.getValue();
+			
+			if (key.equals("Enable roots")) {
+				KTreeCfg.rootsEnable = property.getBoolean();
+			}
+			else if (key.equals("Enabled dimension ids")) {
+				KTreeCfg.enabledDimensionIds = toSet(property.getIntList());
+			}
+			else if (key.equals("Disabled dimension ids")) {
+				KTreeCfg.disabledDimensionIds = toSet(property.getIntList());
+			}
+		}
+	}
+	
+	private static Set<Integer> toSet(int[] array) {
+		Set<Integer> set = new HashSet<Integer>();
+		
+		for (int number : array) {
+			set.add(Integer.valueOf(number));
+		}
+		
+		return set;
 	}
 
 	private static void setDefaultConfigValues(File configFile) {
@@ -127,6 +163,12 @@ public class KTreeCfgBiomes {
 		Configuration config = new Configuration(configFile);
 		config.load();
 		
+		ConfigCategory generalSettings = config.getCategory("general");
+		Property enableRoots = new Property("Enable roots", "true", Property.Type.BOOLEAN);
+		Property enabledDimensionIds = new Property("Enabled dimension ids", new String[] {"0"}, Property.Type.INTEGER);
+		Property disabledDimensionIds = new Property("Disabled dimension ids", new String[] {"-1", "1"} , Property.Type.INTEGER);
+		addPropertiesToCategory(generalSettings, enableRoots, enabledDimensionIds, disabledDimensionIds);
+		
 		ConfigCategory mainParent = config.getCategory("biomeconfiguration");
 		
 		addCategory("forests", biomes(Type.FOREST), noExcludes(), defaultForestDensities, mainParent);
@@ -139,6 +181,8 @@ public class KTreeCfgBiomes {
 		addCategory("snowy", biomes(Type.SNOWY), noExcludes(), defaultSnowyDensities, mainParent);
 		addCategory("jungles", biomes(Type.JUNGLE), noExcludes(), defaultJungleDensities, mainParent);
 		addBiomeOverride("birchForests", biomes(BiomeGenBase.birchForest, BiomeGenBase.birchForestHills), overriddenBirchForestDensities, mainParent);
+		
+		
 		
 		config.save();
 	}

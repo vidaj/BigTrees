@@ -26,11 +26,11 @@ public class TreeConfiguration {
 	
 	protected List<BlockAndMeta> baseBlocks;
 
-	protected int locality;
+	protected boolean hasNoiseField;
 
-	protected int minLocality;
+	protected int minNoiseValue;
 
-	protected int maxLocality;
+	protected int maxNoiseValue;
 	
 	//
 	// For TallOak only
@@ -73,7 +73,7 @@ public class TreeConfiguration {
 		baseBlocks = new ArrayList<BlockAndMeta>();
 		baseBlocks.add(new BlockAndMeta(Blocks.grass));
 		baseBlocks.add(new BlockAndMeta(Blocks.dirt));
-		locality = 1;
+		hasNoiseField = true;
 	}
 	
 	public Algorithm getAlgorithm() {
@@ -108,16 +108,16 @@ public class TreeConfiguration {
 		return baseBlocks;
 	}
 
-	public int getLocality() {
-		return locality;
+	public boolean hasNoiseField() {
+		return hasNoiseField;
 	}
 
-	public int getMinLocality() {
-		return minLocality;
+	public int getMinNoiseValue() {
+		return minNoiseValue;
 	}
 
-	public int getMaxLocality() {
-		return maxLocality;
+	public int getMaxNoiseValue() {
+		return maxNoiseValue;
 	}
 	public double getMinBranchless() {
 		return minBranchless;
@@ -226,16 +226,16 @@ public class TreeConfiguration {
 				.getStringList();
 		baseBlocks = getBlocksFromNames(baseblockNames);
 		
-		locality = config
+		hasNoiseField = config
 				.get("Tree Configuration Settings",
-						"Locality Distribution Type",
-						defaults.getLocality(),
-						"noise field to determine where in biome tree can grow. 1 through number of trees. Any other integer to disable tree noise.")
-				.getInt();
-		minLocality = config.get("Tree Configuration Settings",
-				"Locality Min", defaults.getMinLocality(), "0 to 144").getInt();
-		maxLocality = config.get("Tree Configuration Settings",
-				"Locality Max", defaults.getMaxLocality(), "0 to 144").getInt();
+						"Use noise field",
+						defaults.hasNoiseField(),
+						"Noise field to determine where in biome tree can grow.")
+				.getBoolean();
+		minNoiseValue = config.get("Tree Configuration Settings",
+				"Noise Min Value", defaults.getMinNoiseValue(), "0 to 144").getInt();
+		maxNoiseValue = config.get("Tree Configuration Settings",
+				"Noise Max Value", defaults.getMaxNoiseValue(), "0 to 144").getInt();
 		
 		if (algorithm == Algorithm.TallOak) {
 			minBranchless = Double.parseDouble(config.get("Tree Configuration Settings", "Branchless Min", defaults.minBranchless,"Fraction of tree height which has no branches").getString());
@@ -281,9 +281,5 @@ public class TreeConfiguration {
 		}
 		
 		return result;
-	}
-
-	public void setLocality(int locality) {
-		this.locality = locality;
 	}
 }

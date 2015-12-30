@@ -102,18 +102,11 @@ public class KTreeDecorate {
 	}
 
 	private static boolean shouldGenerateTree(TreeConfiguration treeConfiguration, int currentTreeLocality) {
-		int locality = treeConfiguration.getLocality();
-		
-		if (locality == 0) {
+		if (!treeConfiguration.hasNoiseField()) {
 			return true;
 		}
 		
-		if (locality > numberoftrees || locality < 1) {
-			treeConfiguration.setLocality(0);
-			return true;
-		}
-		
-		return isInRange(currentTreeLocality, treeConfiguration.getMinLocality(), treeConfiguration.getMaxLocality());
+		return isInRange(currentTreeLocality, treeConfiguration.getMinNoiseValue(), treeConfiguration.getMaxNoiseValue());
 	}
 	
 	private static boolean isInRange(int value, int min, int max) {

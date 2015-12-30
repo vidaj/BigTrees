@@ -19,7 +19,6 @@ public class WorldGenBigBirch extends KWorldGenBigTree{
         heightLimitLimit = 3; //Height Variation
         leafDistanceLimit = 4; //Leaf Thickness
         
-        heightLimit = KTreeCfg.vary(rand,KTreeCfg.birchHeight);
 		return super.generate(world, random, x, y, z);
 	}
 }

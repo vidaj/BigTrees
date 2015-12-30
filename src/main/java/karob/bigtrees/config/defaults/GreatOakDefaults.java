@@ -14,8 +14,8 @@ public class GreatOakDefaults extends TreeConfiguration {
 		maxHeight = 32;
 		wood = new BlockAndMeta(Blocks.log, 0);
 		leaf = new BlockAndMeta(Blocks.leaves, 0);
-		minLocality = 45;
-		maxLocality = 65;
+		minNoiseValue = 45;
+		maxNoiseValue = 65;
 	}
 
 }

@@ -18,8 +18,7 @@ public class DeadTreeDefaults extends TreeConfiguration {
 		baseBlocks = new ArrayList<BlockAndMeta>();
 		baseBlocks.add(new BlockAndMeta(Blocks.grass));
 		baseBlocks.add(new BlockAndMeta(Blocks.sand));
-		locality = 1;
-		minLocality = 0;
-		maxLocality = 60;
+		minNoiseValue = 0;
+		maxNoiseValue = 60;
 	}
 }

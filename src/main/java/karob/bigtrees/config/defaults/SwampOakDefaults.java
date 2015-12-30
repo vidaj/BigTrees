@@ -13,7 +13,7 @@ public class SwampOakDefaults extends TreeConfiguration {
 		maxHeight = 32;
 		wood = new BlockAndMeta(Blocks.log, 0);
 		leaf = new BlockAndMeta(Blocks.leaves, 0);
-		minLocality = 55;
-		maxLocality = 75;
+		minNoiseValue = 55;
+		maxNoiseValue = 75;
 	}
 }

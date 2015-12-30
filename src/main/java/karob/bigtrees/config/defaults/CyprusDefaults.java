@@ -14,8 +14,7 @@ public class CyprusDefaults extends TreeConfiguration {
 		maxHeight = 32;
 		wood = new BlockAndMeta(Blocks.log, 1);
 		leaf = new BlockAndMeta(Blocks.leaves, 1);
-		locality = 2;
-		minLocality = 0;
-		maxLocality = 90;
+		minNoiseValue = 0;
+		maxNoiseValue = 90;
 	}
 }
