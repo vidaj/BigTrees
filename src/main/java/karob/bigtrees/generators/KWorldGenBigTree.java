@@ -37,7 +37,7 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
     int heightLimit;
     int height;
     double heightAttenuation;
-    double field_875_h;
+    double branchDensity;
     double branchSlope;
     double scaleWidth;
     double leafDensity;
@@ -63,8 +63,8 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
         rootAlt = 0;
         tapRootRand = 0;
         heightLimit = 0; // Tree height
-        heightAttenuation = 0.31799999999999999D; // Trunk percentage height
-        field_875_h = 1.0D;
+        heightAttenuation = 0.318D; // Trunk percentage height
+        branchDensity = 1.0D;
         branchSlope = 0.618D; // Branch height to base hight stuff
         scaleWidth = 1.0D; // Branch length
         leafDensity = 1.0D;
