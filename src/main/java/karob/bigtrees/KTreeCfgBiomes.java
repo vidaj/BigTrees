@@ -196,7 +196,7 @@ public class KTreeCfgBiomes {
 		
 		int index = 1;
 		for(Map.Entry<TreeConfiguration, Integer> entry : population.entrySet()) {
-			treePopulation.put(Integer.toString(index++), new Property(entry.getKey().getName(), Integer.toString(entry.getValue()), Property.Type.STRING));
+			treePopulation.put(Integer.toString(index++), new Property(entry.getKey().getName(), Integer.toString(entry.getValue()), Property.Type.INTEGER));
 		}
 	}
 }
