@@ -720,6 +720,4 @@ rootAlt = 10;
         	return false;
     	}
 	}
-
-	
 }

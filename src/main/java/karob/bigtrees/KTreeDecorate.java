@@ -23,7 +23,7 @@ import karob.bigtrees.generators.WorldGenDesertTree;
 import karob.bigtrees.generators.WorldGenGreatOak;
 import karob.bigtrees.generators.WorldGenSwampOak;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.fml.common.FMLLog;
+import cpw.mods.fml.common.FMLLog;
 
 public class KTreeDecorate {
 	public static int numberoftrees = 0;

@@ -1,7 +1,7 @@
 package karob.bigtrees.compat;
 
 import karob.bigtrees.config.BlockAndMeta;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
@@ -14,11 +14,11 @@ public class WorldWrapper {
 	}
 	
 	public BiomeGenBase getBiomeGenForCoords(BlockPos pos) {
-		return world.getBiomeGenForCoords(pos.toPos());
+		return world.getBiomeGenForCoords(pos.getX(), pos.getZ());
 	}
 	
 	public int getDimensionId() {
-		return world.provider.getDimensionId();
+		return world.provider.dimensionId;
 	}
 	
 	public long getSeed() {
@@ -26,7 +26,7 @@ public class WorldWrapper {
 	}
 	
 	public BlockPos getHeight(BlockPos pos) {
-		return new BlockPos(world.getHeight(pos.toPos()));
+		return new BlockPos(pos.getX(), world.getHeightValue(pos.getX(), pos.getZ()), pos.getZ());
 	}
 	
 	public void setBlock(BlockPos pos, BlockAndMeta block, BlockFlags ... flags) {
@@ -35,12 +35,17 @@ public class WorldWrapper {
 			flag &= f.value;
 		}
 		
-		world.setBlockState(pos.toPos(), block.toBlockState(), flag);
+		world.setBlock(pos.getX(), pos.getY(), pos.getZ(), block.getBlock());
+		if (block.hasMeta()) {
+			world.setBlockMetadataWithNotify(pos.getX(), pos.getY(), pos.getZ(), block.getMeta(), flag);
+		}
 	}
 	
 	public BlockAndMeta getBlock(BlockPos pos) {
-		IBlockState state = world.getBlockState(pos.toPos());
-		return new BlockAndMeta(state);
+		Block block = world.getBlock(pos.getX(), pos.getY(), pos.getZ());
+		int meta = world.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ());
+		
+		return new BlockAndMeta(block, meta);
 	}
 	
 	public enum BlockFlags {
@@ -57,6 +62,6 @@ public class WorldWrapper {
 	}
 
 	public boolean setToAir(BlockPos pos) {
-		return world.setBlockToAir(pos.toPos());
+		return world.setBlockToAir(pos.getX(), pos.getY(), pos.getZ());
 	}
 }

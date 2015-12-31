@@ -7,14 +7,14 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 //import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = "bigtrees", name = "BigTrees", version = "1.7.2b")
@@ -92,7 +92,7 @@ public class BigTrees {
 	}
 	
 	private BlockPos getBlockPos(DecorateBiomeEvent evt) {
-		return new BlockPos(evt.pos);
+		return new BlockPos(evt.chunkX, 0, evt.chunkZ);
 	}
 	
 	public static void registerBlock(Block b, String name) {

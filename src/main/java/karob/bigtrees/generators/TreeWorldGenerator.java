@@ -2,11 +2,9 @@ package karob.bigtrees.generators;
 
 import java.util.Random;
 
-import karob.bigtrees.KTreeDecorate;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.IWorldGenerator;
 
 public class TreeWorldGenerator implements IWorldGenerator{
 

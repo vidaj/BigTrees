@@ -79,7 +79,7 @@ public abstract class AbstractWorldGenerator extends WorldGenerator implements I
 			return worldObject.getBlock(pos);
 		} catch (RuntimeException e) {
 //			FMLLog.getLogger().error(new FormattedMessage("getBlock(%s, %s, %s)", new Object[]{ x, y, z }));
-			return new BlockAndMeta(new Block(Material.barrier));
+			return new BlockAndMeta(Blocks.bedrock);
 		}
 	}
 	
@@ -418,8 +418,10 @@ public abstract class AbstractWorldGenerator extends WorldGenerator implements I
     }
     
     @Override
-	public boolean generate(World worldIn, Random rand,	net.minecraft.util.BlockPos position) {
-		return generate(new WorldWrapper(worldIn), rand, new BlockPos(position));
+	public boolean generate(World p_76484_1_, Random p_76484_2_,
+			int p_76484_3_, int p_76484_4_, int p_76484_5_) {
+		// TODO Auto-generated method stub
+		return false;
 	}
     
     public abstract boolean generate(WorldWrapper world, Random random, int x, int y, int z);

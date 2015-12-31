@@ -14,10 +14,6 @@ public class BlockPos {
 		this.z = z;
 	}
 	
-	public BlockPos(net.minecraft.util.BlockPos pos) {
-		this(pos.getX(), pos.getY(), pos.getZ());
-	}
-	
 	public BlockPos random2dChunkMove(Random random) {
 		int newX = x + random.nextInt(16) + 8;
 		int newZ = z + random.nextInt(16) + 8;
@@ -35,10 +31,6 @@ public class BlockPos {
 
 	public int getZ() {
 		return z;
-	}
-	
-	public net.minecraft.util.BlockPos toPos() {
-		return new net.minecraft.util.BlockPos(x, y, z);
 	}
 	
 	public String toString() {
