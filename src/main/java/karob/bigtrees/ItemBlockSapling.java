@@ -3,7 +3,6 @@ package karob.bigtrees;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 public class ItemBlockSapling extends ItemBlock
 {
@@ -34,12 +33,5 @@ public class ItemBlockSapling extends ItemBlock
 		}
 
 		return super.getUnlocalizedName() + "." + (new StringBuilder()).append(treeNames[meta]).append("Sapling").toString();
-	}
-
-	@Override
-	public IIcon getIconFromDamage(int meta)
-	{
-		//TODO: block		  getIcon()
-		return field_150939_a.getIcon(0, meta);
 	}
 }

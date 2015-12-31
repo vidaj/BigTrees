@@ -7,11 +7,12 @@ package karob.bigtrees.generators;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.compat.WorldWrapper;
+import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.ITreeConfigurable;
 import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
 //import net.minecraft.src.KTreeCfg;
 
 // Referenced classes of package net.minecraft.src:
@@ -26,16 +27,8 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 	 * placing blocks. Then pre-grow all branch data, then place blocks. Then
 	 * grow all leaves. Don't allow branches to grow through wood.
 	 */
-	Random rand;
 	private int check[][][];
 	private boolean planted;
-	private Block tallWoodBlock;
-	private Block tallLeafBlock;
-	private int woodMeta;
-	private int leafMeta;
-	private int heightmin;
-	private int heightmax;
-	private int stuntmin;
 	private double branchlessmin;
 	private double branchlessmax;
 	private double longestbranchp;
@@ -63,15 +56,9 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 		// KTreeCfg.init();
 	}
 	
+	@Override
 	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		tallWoodBlock = treeConfiguration.getWood().getBlock();
-		tallLeafBlock = treeConfiguration.getLeaf().getBlock();
-		baseblocks = treeConfiguration.getBaseBlocks();
-		woodMeta = treeConfiguration.getWood().getMeta();
-		leafMeta = treeConfiguration.getLeaf().getMeta();
-		heightmin = treeConfiguration.getMinHeight();
-		heightmax = treeConfiguration.getMaxHeight();
-		stuntmin = treeConfiguration.getMinStunt();
+		super.setTreeConfiguration(treeConfiguration);
 		branchlessmin = treeConfiguration.getMinBranchless();
 		branchlessmax = treeConfiguration.getMaxBranchless();
 		longestbranchp = treeConfiguration.getLongestBranchPercentage();
@@ -88,12 +75,13 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 		subbranchsize = treeConfiguration.getSubBranchSize();
 	}
 
-	public boolean generate(World world, Random random, int i, int j, int k) {
+	@Override
+	public boolean generate(WorldWrapper world, Random random, int i, int j, int k) {
 		worldObject = world;
 		rand = random;
 		int l;
 		int m;
-		Block zz;
+		BlockAndMeta zz;
 		// boolean flag;
 		l = random.nextInt(heightmax - heightmin) + heightmin; // Tree height
 		// flag = true;
@@ -127,7 +115,7 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 		 * world.getClass(); if(j < 256 - l - 1) { break label1; } } return
 		 * false; } //end label1
 		 */
-		Block id;
+		BlockAndMeta id;
 		// If tree is generated, require base to be of certain blocktypes.
 		if (!planted) {
 			if (!isSupportedBaseBlock(i, j - 1, k)) {
@@ -136,14 +124,14 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 			
 			// bottom block of tree must be empty
 			id = this.getBlock(i, j, k);
-			if (id != Blocks.air && id != tallLeafBlock)
+			if (!id.isAir() && !id.areEqual(leaf))
 				return false;
 		}
 		// Now check for trunk growth area.
 		int ll;
 		for (ll = 0; ll <= l; ll++) {
 			zz = this.getBlock(i, j + ll, k);
-			if (zz != Blocks.air && zz != tallWoodBlock && zz != tallLeafBlock)
+			if (!zz.isAir() && !zz.areEqual(wood, leaf))
 				break;
 		}
 		if (ll < stuntmin)
@@ -154,20 +142,18 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 				.nextInt((int) (100 * (branchlessmax - branchlessmin) + branchlessmin));
 		m = l * zzz / 100 + j;
 		// First block of trunk.
-		this.setBlockAndMetadata(i, j, k, tallWoodBlock, woodMeta);
+		this.setBlockAndMetadata(i, j, k, wood);
 		// Grow taproot
 		if (KTreeCfg.rootsEnable == true) {
 			for (int jj = 1; jj < ll * taplength / 100; jj++) {
 				zz = this.getBlock(i, j - jj, k);
-				if (zz != Blocks.air && zz != tallWoodBlock
-						&& zz != tallLeafBlock && zz != Blocks.grass
-						&& zz != Blocks.dirt && zz != Blocks.flowing_water
-						&& zz != Blocks.water && zz != Blocks.sand
-						&& zz != Blocks.gravel)
+				if (!zz.isAir() && 
+						!zz.areEqual(wood, leaf) && 
+						!zz.areEqual(Blocks.grass, Blocks.dirt, Blocks.flowing_water, Blocks.water, Blocks.sand, Blocks.gravel)){
 					break;
-				else
-					this.setBlockAndMetadata(i, j - jj, k, tallWoodBlock,
-							woodMeta);
+				} else {
+					this.setBlockAndMetadata(i, j - jj, k, wood);
+				}
 			}
 		}
 		/*
@@ -197,10 +183,9 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 			// grow trunk taller if possible
 			if (growflag) {
 				id = this.getBlock(i, jj + 1, k);
-				if (id == Blocks.air || id == tallWoodBlock
-						|| id == tallLeafBlock) {
+				if (id.isAir() || id.areEqual(wood, leaf)) {
 					jj++;
-					this.setBlockAndMetadata(i, jj, k, tallWoodBlock, woodMeta);
+					this.setBlockAndMetadata(i, jj, k, wood);
 				} else {
 					growflag = false;
 				}
@@ -316,11 +301,9 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 			}
 			// set new block or stop growing branch
 			if (chg == true) {
-				Block id = this.getBlock(ii, jj, kk);
-				if (id == Blocks.air || id == tallWoodBlock
-						|| id == tallLeafBlock) {
-					this.setBlockAndMetadata(ii, jj, kk, tallWoodBlock,
-							woodMeta);
+				BlockAndMeta id = this.getBlock(ii, jj, kk);
+				if (id.isAir() || id.areEqual(wood, leaf)) {
+					this.setBlockAndMetadata(ii, jj, kk, wood);
 				} else {
 					break;
 				}
@@ -374,7 +357,7 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 	}
 
 	void treeLeaf(int i, int j, int k, int r) {
-		Block zz;
+		BlockAndMeta zz;
 		if (r <= 0)
 			return;
 		// boolean d
@@ -383,9 +366,9 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 				for (int jj = -2; jj <= r + 1; jj++) {
 					for (int kk = -r - 1; kk <= r + 1; kk++) {
 						zz = this.getBlock(i + ii, j + jj, k + kk);
-						if (zz == Blocks.air)
+						if (zz.isAir())
 							check[ii + 4][jj + 4][kk + 4] = 2;
-						else if (zz == tallLeafBlock)
+						else if (zz.areEqual(leaf))
 							check[ii + 4][jj + 4][kk + 4] = 1;
 						else
 							check[ii + 4][jj + 4][kk + 4] = 0;
@@ -403,10 +386,9 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 				for (int jj = -r / 2; jj <= r; jj++) {
 					for (int kk = -r; kk <= r; kk++) {
 						if (ii * ii + jj * jj + kk * kk <= rr) {
-							if (this.getBlock(i + ii, j + jj, k + kk) == Blocks.air) {
+							if (this.getBlock(i + ii, j + jj, k + kk).isAir()) {
 								if (rand.nextInt(3) == 0)
-									this.setBlockAndMetadata(i + ii, j + jj, k
-											+ kk, tallLeafBlock, leafMeta);
+									this.setBlockAndMetadata(i + ii, j + jj, k + kk, leaf);
 							}
 						}
 					}
@@ -496,8 +478,7 @@ public class KWorldGenTallTree extends AbstractWorldGenerator implements ITreeCo
 
 		}
 		if (flag) {
-			this.setBlockAndMetadata(i + ii, j + jj, k + kk, tallLeafBlock,
-					leafMeta);
+			this.setBlockAndMetadata(i + ii, j + jj, k + kk, leaf);
 			check[ii + 4][jj + 4][kk + 4] = 1;
 		}
 	}

@@ -4,41 +4,27 @@
 
 package karob.bigtrees.generators;
 
-import java.util.List;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.compat.WorldWrapper;
 import karob.bigtrees.config.BlockAndMeta;
-import karob.bigtrees.config.ITreeConfigurable;
-import karob.bigtrees.config.TreeConfiguration;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 //import net.minecraft.src.KTreeCfg;
-import net.minecraft.world.World;
 
 // Referenced classes of package net.minecraft.src:
 //            WorldGenerator, World, Block, BlockLeaves, 
 //            BlockGrass
 
-public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITreeConfigurable
+public class KWorldGenCyprusTree extends AbstractWorldGenerator
 {
 
-    Random rand;
     private int check[][][];
     private boolean planted;
 //    private int bbx[][];
 //    private int bby[][];
 //    private int bbz[][];
     private int baseY;
-    int rootRand;
-    int rootAlt;
-    private Block cyprusWoodBlock;
-    private Block cyprusLeafBlock;
-    private int woodMeta;
-    private int leafMeta;
-    private int stuntmin;
-    private int heightmin;
-    private int heightmax;
+    
 	
 
     public KWorldGenCyprusTree(boolean flag)
@@ -51,8 +37,9 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
         rootAlt = 0;
 //        KTreeCfg.init();
     }
-
-    public boolean generate(World world, Random random, int i, int j, int k)
+    
+    @Override
+    public boolean generate(WorldWrapper world, Random random, int i, int j, int k)
     {
         worldObject = world;
         rand = random;
@@ -64,7 +51,7 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
           l = 256 - j - 2;
           if(l < stuntmin) return false;
         }
-        Block id;
+        BlockAndMeta id;
         //If tree is generated, require base to be of certain blocktypes.
         if(!planted){
 	    	if (!isSupportedBaseBlock(i, j - 1, k)) {
@@ -73,7 +60,7 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
         	
           //bottom block of tree must be empty
           id = this.getBlock(i, j, k);
-          if(id != Blocks.air && id != cyprusLeafBlock) return false;
+          if (!id.isAir() && !id.areEqual(leaf)) { return false; }
         }
 //world.lightUpdates = false;
 //        growBranch(i,   j, k,   (double)l, rand.nextFloat()*Math.PI/2.0, Math.PI/2.0*0.8,true);
@@ -96,51 +83,51 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
         j -= 4;
         for(int n = 0; n < l; n ++){
           if(n < l - 2){
-            this.setBlockAndMetadata(i, j+n, k, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k+1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i, j+n, k+1, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i, j+n, k,     wood);
+            this.setBlockAndMetadata(i+1, j+n, k,   wood);
+            this.setBlockAndMetadata(i+1, j+n, k+1, wood);
+            this.setBlockAndMetadata(i, j+n, k+1,   wood);
           }else{
-            this.setBlockAndMetadata(i, j+n, k, cyprusLeafBlock, leafMeta);
-            this.setBlockAndMetadata(i+1, j+n, k, cyprusLeafBlock, leafMeta);
-            this.setBlockAndMetadata(i+1, j+n, k+1, cyprusLeafBlock, leafMeta);
-            this.setBlockAndMetadata(i, j+n, k+1, cyprusLeafBlock, leafMeta);
+            this.setBlockAndMetadata(i, j+n, k,     leaf);
+            this.setBlockAndMetadata(i+1, j+n, k,   leaf);
+            this.setBlockAndMetadata(i+1, j+n, k+1, leaf);
+            this.setBlockAndMetadata(i, j+n, k+1,   leaf);
           }
           if(n <= 8){
-            this.setBlockAndMetadata(i, j+n, k-1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k-1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k+1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-1, j+n, k+1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-1, j+n, k, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i, j+n, k-1,   wood);
+            this.setBlockAndMetadata(i+1, j+n, k-1, wood);
+            this.setBlockAndMetadata(i+2, j+n, k,   wood);
+            this.setBlockAndMetadata(i+2, j+n, k+1, wood);
+            this.setBlockAndMetadata(i+1, j+n, k+2, wood);
+            this.setBlockAndMetadata(i, j+n, k+2,   wood);
+            this.setBlockAndMetadata(i-1, j+n, k+1, wood);
+            this.setBlockAndMetadata(i-1, j+n, k,   wood);
           }
           if(n <= 3){
-            this.setBlockAndMetadata(i-1, j+n, k-1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-1, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k-1, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i-1, j+n, k-1, wood);
+            this.setBlockAndMetadata(i-1, j+n, k+2, wood);
+            this.setBlockAndMetadata(i+2, j+n, k+2, wood);
+            this.setBlockAndMetadata(i+2, j+n, k-1, wood);
           }
           if(n <= 1){
-            this.setBlockAndMetadata(i, j+n, k+3, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k+3, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i, j+n, k-2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+1, j+n, k-2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+3, j+n, k, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+3, j+n, k+1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-2, j+n, k, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-2, j+n, k+1, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i, j+n, k+3,   wood);
+            this.setBlockAndMetadata(i+1, j+n, k+3, wood);
+            this.setBlockAndMetadata(i, j+n, k-2,   wood);
+            this.setBlockAndMetadata(i+1, j+n, k-2, wood);
+            this.setBlockAndMetadata(i+3, j+n, k,   wood);
+            this.setBlockAndMetadata(i+3, j+n, k+1, wood);
+            this.setBlockAndMetadata(i-2, j+n, k,   wood);
+            this.setBlockAndMetadata(i-2, j+n, k+1, wood);
           }
           if(n == 0){
-            this.setBlockAndMetadata(i-2, j+n, k-1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-1, j+n, k-2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-2, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i-1, j+n, k+3, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+3, j+n, k+2, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k+3, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+3, j+n, k-1, cyprusWoodBlock, woodMeta);
-            this.setBlockAndMetadata(i+2, j+n, k-2, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i-2, j+n, k-1, wood);
+            this.setBlockAndMetadata(i-1, j+n, k-2, wood);
+            this.setBlockAndMetadata(i-2, j+n, k+2, wood);
+            this.setBlockAndMetadata(i-1, j+n, k+3, wood);
+            this.setBlockAndMetadata(i+3, j+n, k+2, wood);
+            this.setBlockAndMetadata(i+2, j+n, k+3, wood);
+            this.setBlockAndMetadata(i+3, j+n, k-1, wood);
+            this.setBlockAndMetadata(i+2, j+n, k-2, wood);
           }
         }
 /*
@@ -238,7 +225,7 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
       boolean step;
       double spin = 0.0;
       double heave = 0.0;
-      Block id;
+      BlockAndMeta id;
       double blen = len * 0.75;
       plotWood(i, j, k, size);
       while(len > 1.0){
@@ -264,7 +251,7 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
         }
         if(step == true){
           id = this.getBlock(i, j, k);
-          if(id == Blocks.air || id == cyprusWoodBlock || id == cyprusLeafBlock){
+          if (id.isAir() || id.areEqual(wood, leaf)) {
             plotWood(i, j, k, size);
           }else{
             break;
@@ -306,7 +293,7 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
     }
 
     private void plotWood(int i, int j, int k, int size){
-      this.setBlockAndMetadata(i, j, k, cyprusWoodBlock, woodMeta);
+      this.setBlockAndMetadata(i, j, k, wood);
 /*
       if(size <= 1){
         this.setBlockAndMetadata(i+1, j, k, cyprusWoodBlock, woodMeta);
@@ -345,38 +332,13 @@ public class KWorldGenCyprusTree extends AbstractWorldGenerator implements ITree
           for(int jj = 0; jj <= 1; jj ++){
             for(int kk = -r; kk <= r; kk ++){
               if(ii*ii+jj*jj+kk*kk <= rr){
-                if(this.getBlock(i + ii, j + jj, k + kk) == Blocks.air){
-                  /*if(rand.nextInt(3) == 0)*/ this.setBlockAndMetadata(i + ii, j + jj, k + kk, cyprusLeafBlock, leafMeta);
+                if(this.getBlock(i + ii, j + jj, k + kk).isAir()){
+                  /*if(rand.nextInt(3) == 0)*/ this.setBlockAndMetadata(i + ii, j + jj, k + kk, leaf);
                 }
               }
             }
           }
         }
-    }
-
-
-    private int getMedium(int i, int j, int k){
-        //Roots can grow through the following block types.
-        Block canGrowOpen[] = {Blocks.air, Blocks.sapling, Blocks.flowing_water, Blocks.water, Blocks.flowing_lava, Blocks.lava, Blocks.log, Blocks.log2, Blocks.leaves, Blocks.leaves2};//more to be re-added
-        Block canGrowSolid[] = {Blocks.grass, Blocks.dirt, Blocks.sand, Blocks.gravel}; //more to be re-added
-        Block qq = this.getBlock(i, j, k);
-        //if(qq == 17) return 3;
-        int medium = 0;
-        for(int m = 0; m < canGrowOpen.length; m++){
-          if(qq==canGrowOpen[m]){
-            medium = 1;
-            break;
-          }
-        }
-        if(medium==0){
-          for(int m = 0; m < canGrowSolid.length; m++){
-          if(qq==canGrowSolid[m]){
-              medium = 2;
-              break;
-            }
-          }
-        }
-        return medium;
     }
 
     void growRoot(int l, int m, int n, double theta, double phi)
@@ -438,17 +400,17 @@ else dug = true;
           z2 = z + Math.sin(direction)*hoz;
           i2 = (int)x2; j2 = (int)y2; k2 = (int)z2;
         if(i2 != i || j2 != j || k2 != k){
-          this.setBlockAndMetadata(i, j, k, cyprusWoodBlock, woodMeta); //1);
+          this.setBlockAndMetadata(i, j, k, wood); //1);
           if(dug){
-            if(this.getBlock(i-1, j, k) == Blocks.air) return;
-            if(this.getBlock(i+1, j, k) == Blocks.air) return;
-            if(this.getBlock(i, j, k-1) == Blocks.air) return;
-            if(this.getBlock(i, j, k+1) == Blocks.air) return;
+            if(this.getBlock(i-1, j, k).isAir()) return;
+            if(this.getBlock(i+1, j, k).isAir()) return;
+            if(this.getBlock(i, j, k-1).isAir()) return;
+            if(this.getBlock(i, j, k+1).isAir()) return;
           }
           cnt ++;
           if(cnt < 4){
             if(j2 != j-1 || i2 != i || k2 != k)
-            this.setBlockAndMetadata(i, j-1, k, cyprusWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i, j-1, k, wood);
           }
           med = getMedium(i2, j2, k2);
           if(med != 0){ //Grow normal.
@@ -624,17 +586,7 @@ else dug = true;
 //                while(direction > 2.0*Math.PI){direction = direction - 2.0*Math.PI;}
     }
 
-	@Override
-	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		cyprusWoodBlock = treeConfiguration.getWood().getBlock();
-    	cyprusLeafBlock = treeConfiguration.getLeaf().getBlock();
-    	baseblocks = treeConfiguration.getBaseBlocks();
-		woodMeta = treeConfiguration.getWood().getMeta();
-		leafMeta = treeConfiguration.getLeaf().getMeta();
-		heightmin = treeConfiguration.getMinHeight();
-		heightmax = treeConfiguration.getMaxHeight();
-		stuntmin = treeConfiguration.getMinStunt();
-	}
+	
 
 }
 

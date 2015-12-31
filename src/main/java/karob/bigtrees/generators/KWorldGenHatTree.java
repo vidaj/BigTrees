@@ -7,12 +7,12 @@ package karob.bigtrees.generators;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.compat.WorldWrapper;
+import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.ITreeConfigurable;
-import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 //import net.minecraft.src.KTreeCfg;
-import net.minecraft.world.World;
 
 // Referenced classes of package net.minecraft.src:
 //            WorldGenerator, World, Block, BlockLeaves, 
@@ -20,22 +20,12 @@ import net.minecraft.world.World;
 
 public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeConfigurable
 {
-    Random rand;
-    int rootRand;
-    int rootAlt;
     private int check[][][];
     private boolean planted;
 //    private int bbx[][];
 //    private int bby[][];
 //    private int bbz[][];
     private int baseY;
-    private Block hatWoodBlock;
-    private Block hatLeafBlock;
-    private int woodMeta;
-    private int leafMeta;
-    private int stuntmin;
-    private int heightmin;
-    private int heightmax;
 
 
     public KWorldGenHatTree(boolean flag)
@@ -49,12 +39,12 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
 //        KTreeCfg.init();
     }
 
-    public boolean generate(World world, Random random, int i, int j, int k)
+    public boolean generate(WorldWrapper world, Random random, int i, int j, int k)
     {
         return generateCustom(world, random, i, j, k, 4, 30);
     }
 
-    public boolean generateCustom(World world, Random random, int i, int j, int k, int hatBase, int hatHeight) //hatHight is OVERRIDDEN
+    public boolean generateCustom(WorldWrapper world, Random random, int i, int j, int k, int hatBase, int hatHeight) //hatHight is OVERRIDDEN
     {
         worldObject = world;
         rand = random;
@@ -66,7 +56,7 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
           l = 256 - j - 2;
           if(l < stuntmin) return false;
         }
-        Block id;
+        BlockAndMeta id;
         //If tree is generated, require base to be of certain blocktypes.
         if(!planted){
     	if (!isSupportedBaseBlock(i, j - 1, k)) {
@@ -75,7 +65,7 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
     	
           //bottom block of tree must be empty
           id = this.getBlock(i, j, k);
-          if(id != Blocks.air && id != hatLeafBlock) return false;
+          if (!id.isAir() && !id.areEqual(leaf)) { return false; }
         }
 //        growBranch(i,   j, k,   (double)l, rand.nextFloat()*Math.PI/2.0, Math.PI/2.0*0.8,true);
 //world.lightUpdates = false;
@@ -97,48 +87,48 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
         growRoot(i-1,j,k  ,4.7/8.0,rootSlope);
       if(hatBase == 4){
         for(int n = 0; n < l; n ++){
-          this.setBlockAndMetadata(i, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k, hatWoodBlock, woodMeta);
+          this.setBlockAndMetadata(i, j+n, k-1,   wood);
+          this.setBlockAndMetadata(i+1, j+n, k-1, wood);
+          this.setBlockAndMetadata(i+2, j+n, k,   wood);
+          this.setBlockAndMetadata(i+2, j+n, k+1, wood);
+          this.setBlockAndMetadata(i+1, j+n, k+2, wood);
+          this.setBlockAndMetadata(i, j+n, k+2,   wood);
+          this.setBlockAndMetadata(i-1, j+n, k+1, wood);
+          this.setBlockAndMetadata(i-1, j+n, k,   wood);
         }
       }else if(hatBase == 5){
         for(int n = 0; n < l - 1; n ++){
-          this.setBlockAndMetadata(i+2, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-2, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-2, j+n, k, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-2, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k-2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i, j+n, k-2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k-2, hatWoodBlock, woodMeta);
+          this.setBlockAndMetadata(i+2, j+n, k-1, wood);
+          this.setBlockAndMetadata(i+2, j+n, k,   wood);
+          this.setBlockAndMetadata(i+2, j+n, k+1, wood);
+          this.setBlockAndMetadata(i-2, j+n, k-1, wood);
+          this.setBlockAndMetadata(i-2, j+n, k,   wood);
+          this.setBlockAndMetadata(i-2, j+n, k+1, wood);
+          this.setBlockAndMetadata(i-1, j+n, k+2, wood);
+          this.setBlockAndMetadata(i, j+n, k+2,   wood);
+          this.setBlockAndMetadata(i+1, j+n, k+2, wood);
+          this.setBlockAndMetadata(i-1, j+n, k-2, wood);
+          this.setBlockAndMetadata(i, j+n, k-2,   wood);
+          this.setBlockAndMetadata(i+1, j+n, k-2, wood);
         }
       }else if(hatBase == 7){
         for(int n = 0; n < l - 2; n ++){
-          this.setBlockAndMetadata(i+3, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+3, j+n, k, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+3, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-3, j+n, k-1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-3, j+n, k, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-3, j+n, k+1, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k+3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i, j+n, k+3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k+3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-1, j+n, k-3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i, j+n, k-3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+1, j+n, k-3, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i+2, j+n, k-2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-2, j+n, k+2, hatWoodBlock, woodMeta);
-          this.setBlockAndMetadata(i-2, j+n, k-2, hatWoodBlock, woodMeta);
+          this.setBlockAndMetadata(i+3, j+n, k-1, leaf);
+          this.setBlockAndMetadata(i+3, j+n, k,   leaf);
+          this.setBlockAndMetadata(i+3, j+n, k+1, leaf);
+          this.setBlockAndMetadata(i-3, j+n, k-1, leaf);
+          this.setBlockAndMetadata(i-3, j+n, k,   leaf);
+          this.setBlockAndMetadata(i-3, j+n, k+1, leaf);
+          this.setBlockAndMetadata(i-1, j+n, k+3, leaf);
+          this.setBlockAndMetadata(i, j+n, k+3,   leaf);
+          this.setBlockAndMetadata(i+1, j+n, k+3, leaf);
+          this.setBlockAndMetadata(i-1, j+n, k-3, leaf);
+          this.setBlockAndMetadata(i, j+n, k-3,   leaf);
+          this.setBlockAndMetadata(i+1, j+n, k-3, leaf);
+          this.setBlockAndMetadata(i+2, j+n, k+2, leaf);
+          this.setBlockAndMetadata(i+2, j+n, k-2, leaf);
+          this.setBlockAndMetadata(i-2, j+n, k+2, leaf);
+          this.setBlockAndMetadata(i-2, j+n, k-2, leaf);
         }
       }
 
@@ -194,34 +184,34 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
         }
 */
         for(int n = 0; n < l - 1; n ++){
-          this.setBlockAndMetadata(i,   j+n, k,   Blocks.air, 0);
-          this.setBlockAndMetadata(i+1, j+n, k,   Blocks.air, 0);
-          this.setBlockAndMetadata(i+1, j+n, k+1, Blocks.air, 0);
-          this.setBlockAndMetadata(i,   j+n, k+1, Blocks.air, 0);
+          this.setBlockAndMetadata(i,   j+n, k,   new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+1, j+n, k,   new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+1, j+n, k+1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i,   j+n, k+1, new BlockAndMeta(Blocks.air));
         }
       if(hatBase >= 5){
         for(int n = 0; n < l - 2; n ++){
-          this.setBlockAndMetadata(i-1, j+n, k+1, Blocks.air, 0);
-          this.setBlockAndMetadata(i-1, j+n, k,   Blocks.air, 0);
-          this.setBlockAndMetadata(i-1, j+n, k-1, Blocks.air, 0);
-          this.setBlockAndMetadata(i  , j+n, k-1, Blocks.air, 0);
-          this.setBlockAndMetadata(i+1, j+n, k-1, Blocks.air, 0);
+          this.setBlockAndMetadata(i-1, j+n, k+1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-1, j+n, k,   new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-1, j+n, k-1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i  , j+n, k-1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+1, j+n, k-1, new BlockAndMeta(Blocks.air));
         }
       }
       if(hatBase == 7){
         for(int n = 0; n < l - 3; n ++){
-          this.setBlockAndMetadata(i-2, j+n, k-1, Blocks.air, 0);
-          this.setBlockAndMetadata(i-2, j+n, k,   Blocks.air, 0);
-          this.setBlockAndMetadata(i-2, j+n, k+1, Blocks.air, 0);
-          this.setBlockAndMetadata(i+2, j+n, k-1, Blocks.air, 0);
-          this.setBlockAndMetadata(i+2, j+n, k,   Blocks.air, 0);
-          this.setBlockAndMetadata(i+2, j+n, k+1, Blocks.air, 0);
-          this.setBlockAndMetadata(i-1, j+n, k-2, Blocks.air, 0);
-          this.setBlockAndMetadata(i,   j+n, k-2, Blocks.air, 0);
-          this.setBlockAndMetadata(i+1, j+n, k-2, Blocks.air, 0);
-          this.setBlockAndMetadata(i-1, j+n, k+2, Blocks.air, 0);
-          this.setBlockAndMetadata(i,   j+n, k+2, Blocks.air, 0);
-          this.setBlockAndMetadata(i+1, j+n, k+2, Blocks.air, 0);
+          this.setBlockAndMetadata(i-2, j+n, k-1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-2, j+n, k,   new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-2, j+n, k+1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+2, j+n, k-1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+2, j+n, k,   new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+2, j+n, k+1, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-1, j+n, k-2, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i,   j+n, k-2, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+1, j+n, k-2, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i-1, j+n, k+2, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i,   j+n, k+2, new BlockAndMeta(Blocks.air));
+          this.setBlockAndMetadata(i+1, j+n, k+2, new BlockAndMeta(Blocks.air));
         }
       }
 //world.lightUpdates = true;
@@ -265,7 +255,7 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
       boolean step;
       double spin = 0.0;
       double heave = 0.0;
-      Block id;
+      BlockAndMeta id;
       double blen = len * 0.75;
       plotWood(i, j, k, size);
       while(len > 1.0){
@@ -291,7 +281,7 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
         }
         if(step == true){
           id = this.getBlock(i, j, k);
-          if(id == Blocks.air || id == hatWoodBlock || id == hatLeafBlock){
+          if (id.isAir() || id.areEqual(wood, leaf)) {
             plotWood(i, j, k, size);
           }else{
             break;
@@ -330,40 +320,40 @@ public class KWorldGenHatTree extends AbstractWorldGenerator implements ITreeCon
       treeLeaf(i, j, k, 3);
     }
 
-    private void plotProp(int i, int j, int k){
-      int n = 1;
-      Block id;
-      while(n < 15){
-        if(this.getBlock(i+1, j-n, k) == Blocks.fence) return;
-        if(this.getBlock(i-1, j-n, k) == Blocks.fence) return;
-        if(this.getBlock(i, j-n, k+1) == Blocks.fence) return;
-        if(this.getBlock(i, j-n, k-1) == Blocks.fence) return;
-        id = this.getBlock(i, j-n, k);
-        if(id == Blocks.air || id == Blocks.tallgrass || id == Blocks.yellow_flower || id == Blocks.red_flower || id == Blocks.brown_mushroom || id == Blocks.red_mushroom || id == hatLeafBlock || id == hatWoodBlock)
-          n ++;
-        else if(id == Blocks.grass || id == Blocks.dirt || id == Blocks.stone || id == Blocks.sand || id == Blocks.gravel)
-          break;
-        else
-          return;
-      }
-      for(int q = 1; q <= n; q ++){
-        id = this.getBlock(i, j-q, k);
-        if(id == Blocks.air || id == Blocks.tallgrass || id == Blocks.yellow_flower || id == Blocks.red_flower || id == Blocks.brown_mushroom || id == Blocks.red_mushroom)
-          this.setBlockAndMetadata(i, j-q, k, Blocks.fence, 0);
-      }
-    }
+//    private void plotProp(int i, int j, int k){
+//      int n = 1;
+//      Block id;
+//      while(n < 15){
+//        if(this.getBlock(i+1, j-n, k) == Blocks.fence) return;
+//        if(this.getBlock(i-1, j-n, k) == Blocks.fence) return;
+//        if(this.getBlock(i, j-n, k+1) == Blocks.fence) return;
+//        if(this.getBlock(i, j-n, k-1) == Blocks.fence) return;
+//        id = this.getBlock(i, j-n, k);
+//        if(id == Blocks.air || id == Blocks.tallgrass || id == Blocks.yellow_flower || id == Blocks.red_flower || id == Blocks.brown_mushroom || id == Blocks.red_mushroom || id == hatLeafBlock || id == hatWoodBlock)
+//          n ++;
+//        else if(id == Blocks.grass || id == Blocks.dirt || id == Blocks.stone || id == Blocks.sand || id == Blocks.gravel)
+//          break;
+//        else
+//          return;
+//      }
+//      for(int q = 1; q <= n; q ++){
+//        id = this.getBlock(i, j-q, k);
+//        if(id == Blocks.air || id == Blocks.tallgrass || id == Blocks.yellow_flower || id == Blocks.red_flower || id == Blocks.brown_mushroom || id == Blocks.red_mushroom)
+//          this.setBlockAndMetadata(i, j-q, k, Blocks.fence, 0);
+//      }
+//    }
 
     private void plotWood(int i, int j, int k, int size){
-      this.setBlockAndMetadata(i, j, k, hatWoodBlock, woodMeta);
+      this.setBlockAndMetadata(i, j, k, wood);
       if(size <= 1){
-        this.setBlockAndMetadata(i+1, j, k, hatWoodBlock, woodMeta);
-        this.setBlockAndMetadata(i+1, j, k+1, hatWoodBlock, woodMeta);
-        this.setBlockAndMetadata(i, j, k+1, hatWoodBlock, woodMeta);
+        this.setBlockAndMetadata(i+1, j, k,   wood);
+        this.setBlockAndMetadata(i+1, j, k+1, wood);
+        this.setBlockAndMetadata(i, j, k+1,   wood);
 if(size == 0){
-        this.setBlockAndMetadata(i, j+1, k, hatWoodBlock, woodMeta);
-        this.setBlockAndMetadata(i+1, j+1, k, hatWoodBlock, woodMeta);
-        this.setBlockAndMetadata(i+1, j+1, k+1, hatWoodBlock, woodMeta);
-        this.setBlockAndMetadata(i, j+1, k+1, hatWoodBlock, woodMeta);
+        this.setBlockAndMetadata(i, j+1, k,     wood);
+        this.setBlockAndMetadata(i+1, j+1, k,   wood);
+        this.setBlockAndMetadata(i+1, j+1, k+1, wood);
+        this.setBlockAndMetadata(i, j+1, k+1,   wood);
 }
       }
 /*      if(size > 20.0){
@@ -411,11 +401,11 @@ if(size == 0){
 //        jj = j + rand.nextInt(2*2+1)-2;
 //        kk = k + rand.nextInt(r*2+1)-r;
 //        if(this.getBlockId(ii, jj, kk) == hatLeafBlock) plotVine(ii,jj,kk);
-        if(this.getBlock(i+r, j, k) == hatLeafBlock){
+        if(this.getBlock(i+r, j, k).areEqual(leaf)){
           plotVine(i+r,j,k,1);
           plotVine(i+r,j,k,4);
         }
-        if(this.getBlock(i, j, k+r) == hatLeafBlock){
+        if(this.getBlock(i, j, k+r).areEqual(leaf)){
           plotVine(i,j,k+r,2);
           plotVine(i,j,k+r,8);
         }
@@ -423,8 +413,8 @@ if(size == 0){
     }
 
     private void treeLeafSpot(int i, int j, int k, boolean flag){
-      if(this.getBlock(i, j, k) == Blocks.air){
-        this.setBlockAndMetadata(i, j, k, hatLeafBlock, leafMeta);
+      if(this.getBlock(i, j, k).isAir()){
+        this.setBlockAndMetadata(i, j, k, leaf);
 //        if(flag){
 //          if(rand.nextInt(4) == 1) plotVine(i, j, k);
 //plotVine(i, j, k);
@@ -444,50 +434,27 @@ if(size == 0){
 //        l = rand.nextInt(4)+1;
 //        if(l == 3) l = 8;
         int ii, kk;
-	Block id;
+	BlockAndMeta id;
         if(l == 2){ ii=1; kk=0; }
         else if(l == 1){ ii=0; kk=-1; }
         else if(l == 4){ ii=0; kk=1; }
         else{ ii=-1; kk=0; l=8; }
         id = this.getBlock(i+ii, j, k+kk);
         for(int n = 0; n < 4; n ++){
-          if(id == hatLeafBlock){
+          if(id.areEqual(leaf)){
             i += ii; k += kk;
           }else{
             break;
           }
           id = this.getBlock(i+ii, j, k+kk);
         }
-        if(id != Blocks.air) return;
-        this.setBlockAndMetadataWithNotify(i, j, k, Blocks.vine, l);
-        for(int i1 = 20; this.getBlock(i, --j, k) == Blocks.air && i1 > 0; i1--)
+        if(!id.isAir()) return;
+        this.setBlockAndMetadataWithNotify(i, j, k, new BlockAndMeta(Blocks.vine, l));
+        for(int i1 = 20; this.getBlock(i, --j, k).isAir() && i1 > 0; i1--)
         {
-            this.setBlockAndMetadataWithNotify(i, j, k, Blocks.vine, l);
+            this.setBlockAndMetadataWithNotify(i, j, k, new BlockAndMeta(Blocks.vine, l));
         }
 
-    }
-
-    private int getMedium(int i, int j, int k){
-        //Roots can grow through the following block types.
-        Block canGrowOpen[] = {Blocks.air, Blocks.sapling, Blocks.flowing_water, Blocks.water, Blocks.flowing_lava, Blocks.lava, Blocks.log, Blocks.log2, Blocks.leaves, Blocks.leaves2};//more to be re-added
-        Block canGrowSolid[] = {Blocks.grass, Blocks.dirt, Blocks.sand, Blocks.gravel}; //more to be re-added
-        Block qq = this.getBlock(i, j, k);
-        int medium = 0;
-        for(int m = 0; m < canGrowOpen.length; m++){
-          if(qq==canGrowOpen[m]){
-            medium = 1;
-            break;
-          }
-        }
-        if(medium==0){
-          for(int m = 0; m < canGrowSolid.length; m++){
-          if(qq==canGrowSolid[m]){
-              medium = 2;
-              break;
-            }
-          }
-        }
-        return medium;
     }
 
     void growRoot(int l, int m, int n, double theta, double phi)
@@ -545,11 +512,11 @@ if(size == 0){
           z2 = z + Math.sin(direction)*hoz;
           i2 = (int)x2; j2 = (int)y2; k2 = (int)z2;
         if(i2 != i || j2 != j || k2 != k){
-          this.setBlockAndMetadata(i, j, k, hatWoodBlock, woodMeta); //1);
+          this.setBlockAndMetadata(i, j, k, wood); //1);
           cnt ++;
           if(cnt < 4){
             if(j2 != j-1 || i2 != i || k2 != k)
-            this.setBlockAndMetadata(i, j-1, k, hatWoodBlock, woodMeta);
+            this.setBlockAndMetadata(i, j-1, k, wood);
           }
           med = getMedium(i2, j2, k2);
           if(med != 0){ //Grow normal.
@@ -724,18 +691,5 @@ if(size == 0){
 //                while(direction < 0.0){direction = direction + 2.0*Math.PI;}
 //                while(direction > 2.0*Math.PI){direction = direction - 2.0*Math.PI;}
     }
-
-	@Override
-	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		hatWoodBlock = treeConfiguration.getWood().getBlock();
-    	hatLeafBlock = treeConfiguration.getLeaf().getBlock();
-    	baseblocks = treeConfiguration.getBaseBlocks();
-		woodMeta = treeConfiguration.getWood().getMeta();
-		leafMeta = treeConfiguration.getLeaf().getMeta();
-		heightmin = treeConfiguration.getMinHeight();
-		heightmax = treeConfiguration.getMaxHeight();
-		stuntmin = treeConfiguration.getMinStunt();
-	}
-
 }
 

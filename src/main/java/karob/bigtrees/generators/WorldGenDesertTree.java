@@ -2,6 +2,8 @@ package karob.bigtrees.generators;
 
 import java.util.Random;
 
+import karob.bigtrees.compat.BlockPos;
+import karob.bigtrees.compat.WorldWrapper;
 import net.minecraft.world.World;
 
 public class WorldGenDesertTree extends KWorldGenBigTree {
@@ -11,7 +13,7 @@ public class WorldGenDesertTree extends KWorldGenBigTree {
 	}
 
 	@Override
-	public boolean generate(World world, Random random, int i, int j, int k) {
+	public boolean generate(WorldWrapper world, Random random, BlockPos position){
 		heightAttenuation = 0.3D; // Trunk Percentage Height
 		scaleWidth = 1.0D; // Branch Length
 		trunkSize = 2; // Trunk Width
@@ -28,7 +30,7 @@ public class WorldGenDesertTree extends KWorldGenBigTree {
 		// trunkBlock = Block.getBlockById(KTreeCfg.deadWoodType);
 		// trunkMeta = KTreeCfg.deadWoodMeta;
 
-		return super.generate(world, random, i, j, k);
+		return super.generate(world, random, position);
 	}
 
 }
