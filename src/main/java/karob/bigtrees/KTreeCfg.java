@@ -6,8 +6,6 @@ import java.util.Random;
 //import net.minecraft.src.KGetOptions;
 import java.util.Set;
 
-import cpw.mods.fml.common.discovery.asm.ModFieldVisitor;
-
 public class KTreeCfg {
 
 	public static boolean rootsEnable = true;

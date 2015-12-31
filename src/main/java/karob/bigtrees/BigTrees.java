@@ -1,24 +1,21 @@
 package karob.bigtrees;
 
-import java.io.File;
-
+import karob.bigtrees.compat.BlockPos;
+import karob.bigtrees.compat.WorldWrapper;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 //import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid = "bigtrees", name = "BigTrees", version = "1.7.2b")
 public class BigTrees {
@@ -80,23 +77,24 @@ public class BigTrees {
 	public boolean decorate(DecorateBiomeEvent.Decorate evt) {
 		if (evt.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
 			
-			int chunkX = evt.chunkX;
-			int chunkZ = evt.chunkZ;
-			BiomeGenBase biome = evt.world.getBiomeGenForCoords(chunkX, chunkZ);
+			WorldWrapper world = new WorldWrapper(evt.world);
+			BlockPos blockPos = getBlockPos(evt);
+			BiomeGenBase biome = world.getBiomeGenForCoords(blockPos);
 			
-			int dimensionId = evt.world.provider.dimensionId;
+			int dimensionId = world.getDimensionId();
 			if (!KTreeCfg.isValidDimension(dimensionId)) {
 				return true;
 			}
 
-			return KTreeDecorate.decorate(evt.world, evt.rand, chunkX, chunkZ,
-					biome);
+			return KTreeDecorate.decorate(world, evt.rand, blockPos, biome);
 		}
 		return false;
 	}
-
 	
-
+	private BlockPos getBlockPos(DecorateBiomeEvent evt) {
+		return new BlockPos(evt.pos);
+	}
+	
 	public static void registerBlock(Block b, String name) {
 		GameRegistry.registerBlock(b, b.getUnlocalizedName());
 		LanguageRegistry.addName(b, name);

@@ -7,6 +7,9 @@ package karob.bigtrees.generators;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.compat.BlockPos;
+import karob.bigtrees.compat.WorldWrapper;
+import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.ITreeConfigurable;
 import karob.bigtrees.config.TreeConfiguration;
 import net.minecraft.block.Block;
@@ -27,9 +30,6 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
     static final byte otherCoordPairs[] = {
         2, 0, 0, 1, 2, 1
     };
-    Random rand;
-    int rootRand;
-    int rootAlt;
     int tapRootRand;
     int basePos[] = {
         0, 0, 0
@@ -45,13 +45,6 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
     int heightLimitLimit;
     int leafDistanceLimit;
     int[][] leafNodes;
-    Block trunkBlock;
-    private int trunkMeta;
-    Block leafBlock;
-    private int leafMeta;
-    private int stuntmin;
-    private int heightmin;
-    private int heightmax;
 
 
     public KWorldGenBigTree(boolean doBlockNotify)
@@ -197,13 +190,13 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
                 } else
                 {
                     ai1[byte2] = ai[byte2] + l1;
-                    Block i2 = this.getBlock(ai1[0], ai1[1], ai1[2]);
-                    if(i2 != Blocks.air && i2 != Blocks.leaves)
+                    BlockAndMeta i2 = this.getBlock(ai1[0], ai1[1], ai1[2]);
+                    if (!i2.areEqual(Blocks.air, Blocks.leaves))
                     {
                         l1++;
                     } else
                     {
-                        this.setBlockAndMetadata(ai1[0], ai1[1], ai1[2], this.leafBlock, this.leafMeta);
+                        this.setBlockAndMetadata(ai1[0], ai1[1], ai1[2], leaf);
                         //worldObj.setBlock(ai1[0], ai1[1], ai1[2], l);
                         l1++;
                     }
@@ -214,7 +207,11 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
 
     }
 
-// CHECK IF TIME TO GROW BRANCHES - and partially decide branch length
+
+
+
+
+	// CHECK IF TIME TO GROW BRANCHES - and partially decide branch length
     float layerSize(int i)
     {
         if(trunkSize == 0){
@@ -329,7 +326,7 @@ public class KWorldGenBigTree extends AbstractWorldGenerator implements ITreeCon
             ai3[j] = MathHelper.floor_double((double)(ai[j] + k) + 0.5D);
             ai3[byte1] = MathHelper.floor_double((double)ai[byte1] + (double)k * d + 0.5D);
             ai3[byte2] = MathHelper.floor_double((double)ai[byte2] + (double)k * d1 + 0.5D);
-            this.setBlockAndMetadata(ai3[0], ai3[1], ai3[2], this.trunkBlock, this.trunkMeta);
+            this.setBlockAndMetadata(ai3[0], ai3[1], ai3[2], wood);
             //worldObj.setBlock(ai3[0], ai3[1], ai3[2], i);
         }
 
@@ -551,29 +548,6 @@ rootAlt = 10;
         }
     }
 
-    private int getMedium(int i, int j, int k){
-        //Roots can grow through the following block types.
-        Block canGrowOpen[] = {Blocks.air, Blocks.sapling, Blocks.flowing_water, Blocks.water, Blocks.flowing_lava, Blocks.lava, Blocks.log, Blocks.log2, Blocks.leaves, Blocks.leaves2};//more to be re-added
-        Block canGrowSolid[] = {Blocks.grass, Blocks.dirt, Blocks.sand, Blocks.gravel}; //more to be re-added
-        Block qq = this.getBlock(i, j, k);
-        int medium = 0;
-        for(int m = 0; m < canGrowOpen.length; m++){
-          if(qq==canGrowOpen[m]){
-            medium = 1;
-            break;
-          }
-        }
-        if(medium==0){
-          for(int m = 0; m < canGrowSolid.length; m++){
-          if(qq==canGrowSolid[m]){
-              medium = 2;
-              break;
-            }
-          }
-        }
-        return medium;
-    }
-
 // Grows roots
     void growTapRoot(int i, int j, int k, double flen)
     {
@@ -598,284 +572,8 @@ rootAlt = 10;
           //zz = world.getBlockId(ai[0], ai[1] - jj, ai[2]);
           //if(zz != 0 && zz != trunkBlock && zz != trunkMeta && zz != 2 && zz != 3 && zz != 8 && zz != 9 && zz != 12 && zz != 13) break;
           //else
-          this.setBlockAndMetadata(i, j-jj, k, this.trunkBlock, this.trunkMeta);
+          this.setBlockAndMetadata(i, j-jj, k, wood);
         }
-    }
-
-// Grows roots
-    void growRoot(int l, int m, int n, double theta, double phi)
-    {
-        if(KTreeCfg.rootsEnable == false) return;
-/*        int rr = rand.nextInt(3);
-        if(rootRand == 0){
-          m -= rr;
-          rootRand = rr;
-        }else{
-          rootRand = 0;
-        }
-*/
-/*        switch(rootRand){
-          case 1:
-            rootRand = 2;
-            break;
-          case 2:
-            m -= 1;
-            rootRand = 3;
-            break;
-          case 3:
-            //m -= 2;
-            rootRand = 4;
-            break;
-          case 4:
-            m -= 1;
-            rootRand = 0;
-            break;
-          default:
-            rootRand = 0;
-        }
-*/
-/*
-        rootRand ++;
-        if(rootRand > 5){
-          rootAlt = rand.nextInt(2);
-          rootRand = 0;
-        }else{
-          if(rootAlt == 1){
-            m --;
-            rootAlt = 0;
-          }else{
-            rootAlt = 1;
-          }
-        }*/
-        if(rootAlt == 1){
-          rootRand = rand.nextInt(2);
-          m -= rootRand;
-          rootAlt = 2;
-        }else if(rootAlt == 2){
-          if(rootRand == 0)
-            m -= 1;
-          rootAlt = 0;
-        }else if(rootAlt == 10){
-          m -= rand.nextInt(2);
-        }
-        m += 1;
-        phi -= (double)rand.nextFloat()*0.05;
-        theta += (double)rand.nextFloat()*0.1 - 0.05;
-        double direction = (2.0*Math.PI) * theta;
-        double curl = rand.nextFloat()*0.4F - 0.2F;
-        double pitch = (2.0*Math.PI) * phi;
-        int length = 2 + (3*trunkSize) + rand.nextInt(2);
-        double x, y, z;
-        if(l > 0) x = (double)l + 0.5;
-        else x = (double)l - 0.5;
-        //double y = (double)basePos[1] + 0.5;
-        y = (double)m + 0.5;
-        if(n > 0) z = (double)n + 0.5;
-        else z = (double)n - 0.5;
-        double x2, y2, z2, hoz;
-        int i = (int)x; int j = (int)y; int k = (int)z;
-        int i2, j2, k2, di, dk;
-        int med = getMedium(i, j, k); //Check the "Medium" of a block for root growing - solid, open, or forbidden.
-        int cnt = 0;
-        while(length > 0.0){
-          length --;
-//          direction = direction + curl;
-          curl = curl + rand.nextFloat()*0.06F - 0.03F;
-          if(med == 1){ //Root growing in openness.
-            pitch = (pitch + Math.PI/2.0)*0.7 - Math.PI/2.0;
-//            if(pitch > 0.0){
-//              pitch = pitch - 10.0*Math.PI/180.0;
-//            }else{
-//              pitch = (pitch + Math.PI/2.0)*0.7 - Math.PI/2.0;
-//            }
-          }else{ //Root growing in solid.
-            pitch = (pitch + Math.PI/2.0)*0.9 - Math.PI/2.0;
-          }
-
-          hoz = Math.cos(pitch);
-          x2 = x + Math.cos(direction)*hoz;
-          y2 = y + Math.sin(pitch);
-          z2 = z + Math.sin(direction)*hoz;
-          i2 = (int)x2; j2 = (int)y2; k2 = (int)z2;
-        if(i2 != i || j2 != j || k2 != k){
-          this.setBlockAndMetadata(i, j, k, this.trunkBlock, this.trunkMeta); //1);
-          cnt ++;
-          if(cnt < 4){
-            if(j2 != j-1 || i2 != i || k2 != k)
-            this.setBlockAndMetadata(i, j-1, k, this.trunkBlock, this.trunkMeta);
-          }
-          med = getMedium(i2, j2, k2);
-          if(med != 0){ //Grow normal.
-            x = x2; y = y2; z = z2; i = i2; j = j2; k = k2;
-          }else{ //Try to grow down now.
-            med = getMedium(i, j-1, k);
-            if(med != 0){ //Grow down.
-              y = y - 1.0; j = j - 1; pitch = -Math.PI/2.0;
-            }else{ //Try to grow out now.
-              x2 = x + Math.cos(direction);
-              z2 = z + Math.sin(direction);
-              i2 = (int)x2; k2 = (int)z2;
-              med = getMedium(i2, j, k2);
-              if(med != 0){ //Grow out.
-                x = x2; z = z2; i = i2; k = k2; pitch = 0.0;
-              }else{ //Try bending now.
-                int dir = ((int)(direction*8.0/Math.PI)); //Integer direction - 16 = complete rotation.
-                if(dir < 0) dir = 15 - (15-dir) % 16;
-                else dir = dir % 16;
-                int pol = dir % 2; //'Polarity' of bending root - preferred bending direction.
-                di = i2 - i; dk = k2 - k;
-                int[] tdir = {0, 0, 0, 0}; //Testing directions.
-                if(di == 0 && dk == 0){
-                  if(dir < 1){di=1;dk=0;}
-                  else if(dir < 3){di=1;dk=1;}
-                  else if(dir < 5){di=0;dk=1;}
-                  else if(dir < 7){di=-1;dk=1;}
-                  else if(dir < 9){di=-1;dk=0;}
-                  else if(dir < 11){di=-1;dk=-1;}
-                  else if(dir < 13){di=0;dk=-1;}
-                  else if(dir < 15){di=1;dk=-1;}
-                  else{di=1;dk=0;}
-                }
-                if(dk == 0){
-                  if(di > 0){
-                    if(pol==1){
-                      tdir[0] = 2;
-                      tdir[1] = 14;
-                      tdir[2] = 4;
-                      tdir[3] = 12;
-                    }else{
-                      tdir[0] = 14;
-                      tdir[1] = 2;
-                      tdir[2] = 12;
-                      tdir[3] = 4;
-                    }
-                  }else{
-                    if(pol==1){
-                      tdir[0] = 6;
-                      tdir[1] = 10;
-                      tdir[2] = 4;
-                      tdir[3] = 12;
-                    }else{
-                      tdir[0] = 10;
-                      tdir[1] = 6;
-                      tdir[2] = 12;
-                      tdir[3] = 4;
-                    }
-                  }
-                }else if(di == 0){
-                  if(dk > 0){
-                    if(pol==1){
-                      tdir[0] = 2;
-                      tdir[1] = 6;
-                      tdir[2] = 0;
-                      tdir[3] = 8;
-                    }else{
-                      tdir[0] = 6;
-                      tdir[1] = 2;
-                      tdir[2] = 8;
-                      tdir[3] = 0;
-                    }
-                  }else{
-                    if(pol==1){
-                      tdir[0] = 10;
-                      tdir[1] = 14;
-                      tdir[2] = 8;
-                      tdir[3] = 0;
-                    }else{
-                      tdir[0] = 14;
-                      tdir[1] = 10;
-                      tdir[2] = 0;
-                      tdir[3] = 8;
-                    }
-                  }
-                }else if(dk > 0){
-                  if(di > 0){
-                    if(pol==1){
-                      tdir[0] = 0;
-                      tdir[1] = 4;
-                      tdir[2] = 14;
-                      tdir[3] = 6;
-                    }else{
-                      tdir[0] = 4;
-                      tdir[1] = 0;
-                      tdir[2] = 6;
-                      tdir[3] = 14;
-                    }
-                  }else{
-                    if(pol==1){
-                      tdir[0] = 4;
-                      tdir[1] = 8;
-                      tdir[2] = 2;
-                      tdir[3] = 10;
-                    }else{
-                      tdir[0] = 8;
-                      tdir[1] = 4;
-                      tdir[2] = 10;
-                      tdir[3] = 2;
-                    }
-                  }
-                }else{
-                  if(di > 0){
-                    if(pol==1){
-                      tdir[0] = 12;
-                      tdir[1] = 0;
-                      tdir[2] = 10;
-                      tdir[3] = 2;
-                    }else{
-                      tdir[0] = 0;
-                      tdir[1] = 12;
-                      tdir[2] = 2;
-                      tdir[3] = 10;
-                    }
-                  }else{
-                    if(pol==1){
-                      tdir[0] = 8;
-                      tdir[1] = 12;
-                      tdir[2] = 6;
-                      tdir[3] = 14;
-                    }else{
-                      tdir[0] = 12;
-                      tdir[1] = 8;
-                      tdir[2] = 14;
-                      tdir[3] = 6;
-                    }
-                  }
-                }
-                for(int q = 0; q < 4; q++){
-                  if(tdir[q] == 0){
-                    di = 1; dk = 0;
-                  }else if(tdir[q] == 2){
-                    di = 1; dk = 1;
-                  }else if(tdir[q] == 4){
-                    di = 0; dk = 1;
-                  }else if(tdir[q] == 6){
-                    di = -1; dk = 1;
-                  }else if(tdir[q] == 8){
-                    di = -1; dk = 0;
-                  }else if(tdir[q] == 10){
-                    di = -1; dk = -1;
-                  }else if(tdir[q] == 12){
-                    di = 0; dk = -1;
-                  }else{
-                    di = 1; dk = -1;
-                  }
-                  i2 = i + di; k2 = k + dk;
-                  med = getMedium(i2, j, k2);
-                  if(med != 0){
-                    i = i2; k = k2; x = (double)i + 0.5; z = (double)k + 0.5;
-                    pitch = 0;
-                    direction = (double)tdir[q] * 2.0*Math.PI/16.0;
-                    break;
-                  }
-                }
-                if(med == 0) return; //Root cannot grow any further.
-              }
-            }
-          }
-        }
-        }
-//                while(direction < 0.0){direction = direction + 2.0*Math.PI;}
-//                while(direction > 2.0*Math.PI){direction = direction - 2.0*Math.PI;}
     }
 
 // GENERATES BRANCHES
@@ -955,10 +653,9 @@ rootAlt = 10;
             ai3[i] = ai[i] + j;
             ai3[byte1] = MathHelper.floor_double((double)ai[byte1] + (double)j * d);
             ai3[byte2] = MathHelper.floor_double((double)ai[byte2] + (double)j * d1);
-            Block l = this.getBlock(ai3[0], ai3[1], ai3[2]);
-            if(l != Blocks.air && l != Blocks.leaves && l != Blocks.log)
-            {
-                break;
+            BlockAndMeta l = this.getBlock(ai3[0], ai3[1], ai3[2]);
+            if (!l.isAir() && !l.areEqual(wood, leaf)) {
+            	break;
             }
             j += byte3;
         } while(true);
@@ -991,19 +688,15 @@ rootAlt = 10;
         field_872_k = d2;
 */    }
 
-    public boolean generate(World world, Random random, int i, int j, int k)
-    {
-		return generator(world, random, i, j, k);
-	}
 
-    private boolean generator(World world, Random random, int i, int j, int k)
-    {
-        worldObject = world;
+	@Override
+	public boolean generate(WorldWrapper world, Random random, int x, int y, int z) {
+		worldObject = world;
         long l = random.nextLong();
         rand.setSeed(l);
-        basePos[0] = i;
-        basePos[1] = j;
-        basePos[2] = k;
+        basePos[0] = x;
+        basePos[1] = y;
+        basePos[2] = z;
         
         if (!validTreeLocation()) {
         	worldObject = null;
@@ -1026,17 +719,7 @@ rootAlt = 10;
         	worldObject = null;
         	return false;
     	}
-    }
-
-	@Override
-	public void setTreeConfiguration(TreeConfiguration treeConfiguration) {
-		trunkBlock = treeConfiguration.getWood().getBlock();
-    	leafBlock = treeConfiguration.getLeaf().getBlock();
-		trunkMeta = treeConfiguration.getWood().getMeta();
-		leafMeta = treeConfiguration.getLeaf().getMeta();
-		heightmin = treeConfiguration.getMinHeight();
-		heightmax = treeConfiguration.getMaxHeight();
-		stuntmin = treeConfiguration.getMinStunt();
-		baseblocks = treeConfiguration.getBaseBlocks();
 	}
+
+	
 }

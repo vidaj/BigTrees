@@ -2,10 +2,10 @@ package karob.bigtrees.config.defaults;
 
 import java.util.ArrayList;
 
-import net.minecraft.init.Blocks;
 import karob.bigtrees.config.Algorithm;
 import karob.bigtrees.config.BlockAndMeta;
 import karob.bigtrees.config.TreeConfiguration;
+import net.minecraft.init.Blocks;
 
 public class DeadTreeDefaults extends TreeConfiguration {
 	public DeadTreeDefaults() {

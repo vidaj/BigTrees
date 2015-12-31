@@ -2,6 +2,8 @@ package karob.bigtrees.generators;
 
 import java.util.Random;
 
+import karob.bigtrees.compat.BlockPos;
+import karob.bigtrees.compat.WorldWrapper;
 import net.minecraft.world.World;
 
 public class WorldGenSwampOak extends KWorldGenBigTree{
@@ -10,7 +12,8 @@ public class WorldGenSwampOak extends KWorldGenBigTree{
 		super(flag);
 	}
 	
-	public boolean generate(World world, Random random, int x, int y, int z)
+	@Override
+	public boolean generate(WorldWrapper world, Random random, BlockPos position)
     {
 		heightAttenuation = 0.1D; //Trunk Percentage Height
         scaleWidth = 1.4D; //Branch Length
@@ -25,6 +28,6 @@ public class WorldGenSwampOak extends KWorldGenBigTree{
         //leafBlock = Block.getBlockById(KTreeCfg.swoakLeafType);
         //leafMeta = KTreeCfg.swoakLeafMeta;
         
-		return super.generate(world, random, x, y, z);
+        return super.generate(world, random, position);
 	}
 }
