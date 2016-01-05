@@ -2,6 +2,7 @@ package karob.bigtrees;
 
 import karob.bigtrees.compat.BlockPos;
 import karob.bigtrees.compat.WorldWrapper;
+import karob.bigtrees.generators.TreeWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -12,7 +13,6 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 //import cpw.mods.fml.common.network.NetworkMod;
@@ -22,6 +22,8 @@ public class BigTrees {
 
 	@Instance(Constants.ModId)
 	public static BigTrees instance;
+	
+	private final TreeWorldGenerator treeWorldGenerator = new TreeWorldGenerator();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -31,6 +33,8 @@ public class BigTrees {
 		MinecraftForge.TERRAIN_GEN_BUS.register(this);
 		
 		KTreeCfg.init(event.getModConfigurationDirectory());
+		
+		GameRegistry.registerWorldGenerator(treeWorldGenerator, 1);
 		
 //		registerBlock(new BlockBTSapling().setBlockName("bt_bigSapling"),ItemBlockSapling.class);
 	}
@@ -73,7 +77,7 @@ public class BigTrees {
 	}
 
 	// moved most of decoration to a new file
-	@SubscribeEvent
+//	@SubscribeEvent
 	public boolean decorate(DecorateBiomeEvent.Decorate evt) {
 		if (evt.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
 			

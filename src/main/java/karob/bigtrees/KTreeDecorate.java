@@ -65,8 +65,6 @@ public class KTreeDecorate {
 					continue;
 				}
 				
-				FMLLog.info("[BigTrees] Generating at %s, tree: %s, wood: %s, leaves: %s", treePosition, treeConfiguration.getName(), treeConfiguration.getWood(), treeConfiguration.getLeaf());
-				
 				IWorldGenerator generator = getGenerator(treeConfiguration.getAlgorithm());
 				((ITreeConfigurable)generator).setTreeConfiguration(treeConfiguration);
 				generator.generate(world, rand, treePosition);
