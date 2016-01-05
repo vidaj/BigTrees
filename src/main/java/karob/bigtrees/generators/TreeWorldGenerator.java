@@ -2,24 +2,32 @@ package karob.bigtrees.generators;
 
 import java.util.Random;
 
+import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.compat.BlockPos;
+import karob.bigtrees.compat.WorldWrapper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class TreeWorldGenerator implements IWorldGenerator{
 
-	
-	
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
+	public void generate(Random random, int chunkX, int chunkZ, World orgWorld,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-//		int x = (chunkX * 16) + random.nextInt(16);
-//		int z = (chunkZ * 16) + random.nextInt(16);
-//		
-//		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-////		FMLLog.info("[BigTrees] Generating for x: " + x + ", z: " + z + ", Biome: " + biome.biomeName);
-//		
-//		KTreeDecorate.decorate(world, random, x, z, biome);
+		int x = chunkX * 16;
+		int z = chunkZ * 16;
+		
+		WorldWrapper world = new WorldWrapper(orgWorld);
+
+		int dimensionId = world.getDimensionId();
+		if (!KTreeCfg.isValidDimension(dimensionId)) {
+			return;
+		}
+		
+		BlockPos position = new BlockPos(x, 0, z);
+		BiomeGenBase biome = world.getBiomeGenForCoords(position);
+		
+		KTreeDecorate.decorate(world, random, position, biome);
 	}
 
 }

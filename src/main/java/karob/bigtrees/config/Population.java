@@ -24,4 +24,9 @@ public class Population {
 	public int getPercentageChancePerTree() {
 		return percentageChancePerTree;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("Population[treesPerChunk=%d, percentageChancePerTree=%d", treesPerChunk, percentageChancePerTree);
+	}
 }
