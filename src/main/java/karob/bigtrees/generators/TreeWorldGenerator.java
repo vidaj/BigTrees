@@ -3,9 +3,11 @@ package karob.bigtrees.generators;
 import java.util.Random;
 
 import karob.bigtrees.KTreeCfg;
+import karob.bigtrees.KTreeDecorate;
 import karob.bigtrees.compat.BlockPos;
 import karob.bigtrees.compat.WorldWrapper;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import cpw.mods.fml.common.IWorldGenerator;
 
