@@ -1,11 +1,9 @@
 package karob.bigtrees;
 
 import karob.bigtrees.compat.BlockPos;
-import karob.bigtrees.compat.WorldWrapper;
 import karob.bigtrees.generators.TreeWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +11,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 //import cpw.mods.fml.common.network.NetworkMod;
@@ -29,12 +29,15 @@ public class BigTrees {
 	public void preInit(FMLPreInitializationEvent event) {
 		instance = this;
 
-		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.TERRAIN_GEN_BUS.register(this);
 		
 		KTreeCfg.init(event.getModConfigurationDirectory());
 		
 		GameRegistry.registerWorldGenerator(treeWorldGenerator, 1);
+		
+		if (KTreeCfg.disableVanillaTrees) {
+			MinecraftForge.EVENT_BUS.register(this);
+			MinecraftForge.TERRAIN_GEN_BUS.register(this);
+		}
 		
 //		registerBlock(new BlockBTSapling().setBlockName("bt_bigSapling"),ItemBlockSapling.class);
 	}
@@ -77,21 +80,13 @@ public class BigTrees {
 	}
 
 	// moved most of decoration to a new file
-//	@SubscribeEvent
+	@SubscribeEvent
 	public boolean decorate(DecorateBiomeEvent.Decorate evt) {
 		if (evt.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
-			
-			WorldWrapper world = new WorldWrapper(evt.world);
-			BlockPos blockPos = getBlockPos(evt);
-			BiomeGenBase biome = world.getBiomeGenForCoords(blockPos);
-			
-			int dimensionId = world.getDimensionId();
-			if (!KTreeCfg.isValidDimension(dimensionId)) {
-				return true;
-			}
-
-			return KTreeDecorate.decorate(world, evt.rand, blockPos, biome);
+			evt.setResult(Result.DENY);
+			return true;
 		}
+
 		return false;
 	}
 	
