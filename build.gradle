@@ -17,13 +17,19 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.1"
+ext.configFile = file('build.properties')
+ext.config = parseConfig(configFile)
+
+version = config.version
 group= "karob.bigtrees" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "bigtrees"
 
 minecraft {
-    version = "10.13.4.1558-1.7.10"
+    version = "${config.forge_version}-${config.mc_version}"
     runDir = "eclipse"
+	
+	replace 'GRADLE:VERSION', config.version
+	replaceIn 'Constants.java'
 }
 
 dependencies {
@@ -59,5 +65,14 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
     }
 }
