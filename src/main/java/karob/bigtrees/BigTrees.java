@@ -17,10 +17,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 //import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = "bigtrees", name = "BigTrees", version = "1.7.2b")
+@Mod(modid = Constants.ModId, name = Constants.ModName, version = Constants.ModVersion)
 public class BigTrees {
 
-	@Instance("bigtrees")
+	@Instance(Constants.ModId)
 	public static BigTrees instance;
 
 	@EventHandler
