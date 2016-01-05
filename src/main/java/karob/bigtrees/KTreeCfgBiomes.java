@@ -91,6 +91,8 @@ public class KTreeCfgBiomes {
 			}
 			else if (key.equals("Disabled dimension ids")) {
 				KTreeCfg.disabledDimensionIds = toSet(property.getIntList());
+			} else if (key.equals("Disable vanilla trees")) {
+				KTreeCfg.disableVanillaTrees = property.getBoolean();
 			}
 		}
 	}
@@ -167,7 +169,8 @@ public class KTreeCfgBiomes {
 		Property enableRoots = new Property("Enable roots", "true", Property.Type.BOOLEAN);
 		Property enabledDimensionIds = new Property("Enabled dimension ids", new String[] {"0"}, Property.Type.INTEGER);
 		Property disabledDimensionIds = new Property("Disabled dimension ids", new String[] {"-1", "1"} , Property.Type.INTEGER);
-		addPropertiesToCategory(generalSettings, enableRoots, enabledDimensionIds, disabledDimensionIds);
+		Property disableVanillaTrees = new Property("Disable vanilla trees", "false", Property.Type.BOOLEAN);
+		addPropertiesToCategory(generalSettings, enableRoots, enabledDimensionIds, disabledDimensionIds, disableVanillaTrees);
 		
 		ConfigCategory mainParent = config.getCategory("biomeconfiguration");
 		

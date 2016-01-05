@@ -13,6 +13,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -30,12 +31,15 @@ public class BigTrees {
 	public void preInit(FMLPreInitializationEvent event) {
 		instance = this;
 
-		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.TERRAIN_GEN_BUS.register(this);
 		
 		KTreeCfg.init(event.getModConfigurationDirectory());
 		
 		GameRegistry.registerWorldGenerator(treeWorldGenerator, 1);
+		
+		if (KTreeCfg.disableVanillaTrees) {
+			MinecraftForge.EVENT_BUS.register(this);
+			MinecraftForge.TERRAIN_GEN_BUS.register(this);
+		}
 		
 //		registerBlock(new BlockBTSapling().setBlockName("bt_bigSapling"),ItemBlockSapling.class);
 	}
@@ -78,21 +82,13 @@ public class BigTrees {
 	}
 
 	// moved most of decoration to a new file
-//	@SubscribeEvent
+	@SubscribeEvent
 	public boolean decorate(DecorateBiomeEvent.Decorate evt) {
 		if (evt.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
-			
-			WorldWrapper world = new WorldWrapper(evt.world);
-			BlockPos blockPos = getBlockPos(evt);
-			BiomeGenBase biome = world.getBiomeGenForCoords(blockPos);
-			
-			int dimensionId = world.getDimensionId();
-			if (!KTreeCfg.isValidDimension(dimensionId)) {
-				return true;
-			}
-
-			return KTreeDecorate.decorate(world, evt.rand, blockPos, biome);
+			evt.setResult(Result.DENY);
+			return true;
 		}
+
 		return false;
 	}
 	

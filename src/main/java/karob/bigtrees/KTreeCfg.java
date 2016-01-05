@@ -11,6 +11,7 @@ public class KTreeCfg {
 	public static boolean rootsEnable = true;
 	public static Set<Integer> enabledDimensionIds = createDefaultEnabledDimensionsIds();
 	public static Set<Integer> disabledDimensionIds = new HashSet<Integer>();
+	public static boolean disableVanillaTrees = false;
 
 	public static boolean isValidDimension(int dimensionId) {
 		Integer cachedInteger = Integer.valueOf(dimensionId);
